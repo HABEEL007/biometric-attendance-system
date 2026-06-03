@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BioAttend - Security Audit Detail</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@600;700&amp;family=JetBrains+Mono:wght@500&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "surface-container-lowest": "#060e20",
+            "on-primary": "#1000a9",
+            "on-primary-fixed-variant": "#2f2ebe",
+            "on-primary-fixed": "#07006c",
+            "tertiary-container": "#7c87f3",
+            "surface-container-high": "#222a3d",
+            "primary-fixed-dim": "#c0c1ff",
+            "primary-container": "#8083ff",
+            "surface-variant": "#2d3449",
+            "secondary-container": "#00a6e0",
+            "surface-tint": "#c0c1ff",
+            "outline": "#908fa0",
+            "outline-variant": "#464554",
+            "tertiary-fixed-dim": "#bdc2ff",
+            "primary": "#c0c1ff",
+            "on-tertiary-fixed-variant": "#2f3aa3",
+            "on-tertiary": "#131e8c",
+            "on-secondary-container": "#00374d",
+            "background": "#0b1326",
+            "on-error": "#690005",
+            "error": "#ffb4ab",
+            "on-tertiary-container": "#081486",
+            "on-secondary-fixed": "#001e2c",
+            "on-surface-variant": "#c7c4d7",
+            "on-error-container": "#ffdad6",
+            "inverse-primary": "#494bd6",
+            "tertiary-fixed": "#e0e0ff",
+            "surface-container-low": "#131b2e",
+            "surface": "#0b1326",
+            "surface-bright": "#31394d",
+            "inverse-on-surface": "#283044",
+            "surface-container-highest": "#2d3449",
+            "surface-container": "#171f33",
+            "on-tertiary-fixed": "#000767",
+            "primary-fixed": "#e1e0ff",
+            "on-surface": "#dae2fd",
+            "secondary": "#7bd0ff",
+            "inverse-surface": "#dae2fd",
+            "surface-dim": "#0b1326",
+            "secondary-fixed-dim": "#7bd0ff",
+            "on-secondary-fixed-variant": "#004c69",
+            "on-primary-container": "#0d0096",
+            "error-container": "#93000a",
+            "tertiary": "#bdc2ff",
+            "on-background": "#dae2fd",
+            "secondary-fixed": "#c4e7ff",
+            "on-secondary": "#00354a"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "margin-mobile": "16px",
+            "margin-desktop": "40px",
+            "unit": "4px",
+            "gutter-desktop": "24px",
+            "container-max": "1440px",
+            "gutter-mobile": "16px"
+          },
+          "fontFamily": {
+            "body-md": ["Inter"],
+            "headline-lg": ["Hanken Grotesk"],
+            "label-sm": ["JetBrains Mono"],
+            "body-lg": ["Inter"],
+            "body-sm": ["Inter"],
+            "title-lg": ["Inter"],
+            "headline-md": ["Hanken Grotesk"],
+            "display-lg": ["Hanken Grotesk"],
+            "label-md": ["JetBrains Mono"]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      vertical-align: middle;
+    }
+    .scanner-line {
+      animation: scan 3s ease-in-out infinite;
+    }
+    @keyframes scan {
+      0%, 100% { top: 0%; opacity: 0; }
+      50% { top: 100%; opacity: 1; }
+    }
+    .bounding-box {
+      border: 2px solid #ffb4ab;
+      box-shadow: 0 0 10px rgba(255, 180, 171, 0.5);
+    }
+    .bounding-box-iris {
+      border: 2px solid #7bd0ff;
+      box-shadow: 0 0 10px rgba(123, 208, 255, 0.5);
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background font-body-md min-h-screen flex overflow-hidden">
+<!-- Side Navigation Bar -->
+<aside class="flex flex-col h-full py-6 gap-2 sticky left-0 top-0 overflow-y-auto bg-surface-container-low border-r border-outline-variant w-64 shrink-0">
+<div class="px-6 mb-8">
+<div class="font-headline-md text-headline-md font-bold text-primary">BioAttend</div>
+<div class="font-label-md text-label-md text-on-surface-variant">Enterprise Biometrics</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined">videocam</span>
+<span class="font-label-md text-label-md">Live Monitor</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined">groups</span>
+<span class="font-label-md text-label-md">Staff</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined">person_add_alt</span>
+<span class="font-label-md text-label-md">Enrollment</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined">receipt_long</span>
+<span class="font-label-md text-label-md">Records</span>
+</a>
+<a class="bg-primary-container text-on-primary-container rounded-xl flex items-center gap-3 px-4 py-3 mx-2 transition-transform Active:translate-x-1" href="#">
+<span class="material-symbols-outlined">fact_check</span>
+<span class="font-label-md text-label-md">Audit Logs</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+</aside>
+<!-- Main Content Area (Background Audit Logs) -->
+<main class="flex-1 flex flex-col h-screen overflow-hidden">
+<header class="flex justify-between items-center h-16 px-margin-desktop w-full sticky top-0 z-10 bg-surface-container border-b border-outline-variant">
+<div class="font-headline-md text-headline-md font-bold text-primary">Audit Logs</div>
+<div class="flex items-center gap-4">
+<button class="material-symbols-outlined p-2 rounded-full hover:bg-surface-variant transition-colors">dark_mode</button>
+<button class="material-symbols-outlined p-2 rounded-full hover:bg-surface-variant transition-colors">notifications</button>
+<div class="w-8 h-8 rounded-full bg-surface-variant overflow-hidden">
+<img alt="Administrator Profile" data-alt="A professional headshot of a corporate administrator in a dark studio setting. The lighting is dramatic and low-key, emphasizing a serious and authoritative persona. The color palette is composed of deep navies and muted grays, matching the dark-themed enterprise UI. High detail on facial features conveys precision and reliability." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDSu9lBiMY1yQ_fSSa_S3NgBxxpaADo4pCQcxfP-wBf9w0SUXoqy18nPrjZuytfq3X5DghpgarCgc5gnthb-dAgOOurO0IX3extYlrpUhW1D_yDtElKov7R2wGKN_La8ZpifLUeXNE6n4IHDCUnGM4dkce3A34v8Fr_YWYsErFt0d9plQ62Js96i6LUw_3ytOzFiqdJ_q908pgqQaB9qL9tgPW3nbus4CXy467s_knQaQyJPCILQNpKvE95eFLA_vYe8IEKt2pPbHf"/>
+</div>
+</div>
+</header>
+<div class="p-margin-desktop flex flex-col gap-6 opacity-40 grayscale pointer-events-none">
+<!-- Background Table Mockup -->
+<div class="bg-surface-container rounded-xl border border-outline-variant overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead class="bg-surface-container-high font-label-md text-label-md text-on-surface-variant">
+<tr>
+<th class="px-6 py-4">Timestamp</th>
+<th class="px-6 py-4">Employee</th>
+<th class="px-6 py-4">Event Type</th>
+<th class="px-6 py-4">Station</th>
+<th class="px-6 py-4">Status</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant font-body-sm text-body-sm text-on-surface">
+<tr class="bg-surface-container-low">
+<td class="px-6 py-4">2023-10-27 14:02:11</td>
+<td class="px-6 py-4">Marcus Vane</td>
+<td class="px-6 py-4">Gate Entrance</td>
+<td class="px-6 py-4">Sector-G4</td>
+<td class="px-6 py-4 text-error">FAILED</td>
+</tr>
+<tr class="bg-surface-container">
+<td class="px-6 py-4">2023-10-27 13:58:45</td>
+<td class="px-6 py-4">Elena Rossi</td>
+<td class="px-6 py-4">Gate Entrance</td>
+<td class="px-6 py-4">Sector-B1</td>
+<td class="px-6 py-4 text-secondary">PASSED</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</main>
+<!-- Modal Overlay Backdrop -->
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-margin-mobile">
+<!-- Security Audit Detail Modal -->
+<div class="bg-surface-container-low w-full max-w-5xl rounded-xl border border-outline-variant shadow-2xl flex flex-col max-h-[921px] overflow-hidden">
+<!-- Modal Header -->
+<div class="px-8 py-6 border-b border-outline-variant flex justify-between items-center">
+<div>
+<h2 class="font-headline-md text-headline-md text-primary">Security Audit Detail</h2>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Event ID: EVT-9928-VX-01 • Sector-G4</p>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant hover:text-on-surface transition-colors p-2">close</button>
+</div>
+<!-- Modal Content -->
+<div class="flex-1 overflow-y-auto p-8 grid grid-cols-1 lg:grid-cols-2 gap-8">
+<!-- Left Pane: Captured Snapshot -->
+<div class="flex flex-col gap-4">
+<div class="flex items-center justify-between">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Real-time Capture</span>
+<span class="px-3 py-1 bg-error-container text-on-error-container text-label-sm font-label-sm rounded-full">ALERT DETECTED</span>
+</div>
+<div class="relative aspect-video rounded-lg overflow-hidden border border-outline-variant bg-black">
+<img alt="Captured Employee Face" class="w-full h-full object-cover opacity-80" data-alt="A high-resolution security camera still showing a person's face being scanned. The lighting is harsh and directional, creating a realistic security footage look. There is a visible specular glare across the face area, suggesting light reflecting off a mobile screen being held up to the camera. The image is framed within a digital UI with diagnostic overlays." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBav91Qsv_VX5iqn-8-GMAcp60Sv0YXPzqltvlVrcTC7lRJth_Yf-3zfWZM1BLqPXv2BLTjRUNg0TCBnhl-tu1O93MLSz4m-oCnZjjl-Gb53jdjDb9fvPFxK7fd1UI7NF8McvcXsHIu32VJSDWBf-zfUNQ1dKcPIfyO6mCxtI_2fO84ITzWRiefdaxuk2kLTB4wlfVnn2SAEz2ns_cdbwHjlu48wUVo2z_yq3-kylwyibj56bmx_0FdL_0ONCqbbi6wIhNSp_FL6OwH"/>
+<!-- Face Bounding Box -->
+<div class="absolute top-[15%] left-[30%] w-[40%] h-[60%] bounding-box rounded-xl">
+<div class="absolute -top-6 left-0 font-label-sm text-label-sm text-error bg-error-container/80 px-2 rounded">Face Detected</div>
+</div>
+<!-- Iris Bounding Box (Left) -->
+<div class="absolute top-[35%] left-[42%] w-[6%] h-[8%] bounding-box-iris rounded-full"></div>
+<!-- Iris Bounding Box (Right) -->
+<div class="absolute top-[35%] left-[52%] w-[6%] h-[8%] bounding-box-iris rounded-full"></div>
+<!-- Scanning Animation -->
+<div class="absolute left-0 right-0 h-0.5 bg-primary scanner-line shadow-[0_0_15px_rgba(192,193,255,0.8)]"></div>
+</div>
+<div class="flex gap-2">
+<div class="bg-surface-variant p-3 rounded-lg flex-1">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Timestamp</p>
+<p class="font-body-sm text-body-sm">14:02:11.234 UTC</p>
+</div>
+<div class="bg-surface-variant p-3 rounded-lg flex-1">
+<p class="font-label-sm text-label-sm text-on-surface-variant">Device IP</p>
+<p class="font-body-sm text-body-sm">10.0.42.115</p>
+</div>
+</div>
+</div>
+<!-- Right Pane: Database Reference & Metrics -->
+<div class="flex flex-col gap-6">
+<div class="flex flex-col gap-4">
+<span class="font-label-md text-label-md text-on-surface-variant uppercase tracking-wider">Reference Comparison</span>
+<div class="flex gap-4 items-start">
+<div class="w-24 h-24 rounded-lg overflow-hidden border border-outline-variant shrink-0">
+<img alt="Employee Reference Photo" data-alt="A clean, professional studio headshot used for corporate biometric enrollment. The subject is a woman with neutral expression, shot against a solid gray background with soft, even three-point lighting. The image quality is high-fidelity and serves as the 'gold standard' for facial recognition comparison in the UI." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBVf3zhlSS_dsX2QNnoxNDa4k3JV6-DCG6vRReicpWx4L-bx5aJ33PbZdmhBqPQLeOQRXbIWTQRhMd4TaPXakjn9xEKTLB0ODo79Nqiq1fspvvkr2hE8BHiy5yk5qVqLQpT7L0ngKpCg0V78uY0B-sPQgjqoeW5crN4TpJj0qZIGeduR9BjAU9Gqla53Ew_De5SxYS32XKgzR2UXEAG6Q6lWkI-6TE_1x8FChhLlXKIyi2u7FqjRN6TJN9NAdG1xx-aLzazR-2CBRgT"/>
+</div>
+<div class="flex-1">
+<h3 class="font-title-lg text-title-lg">Marcus Vane</h3>
+<p class="font-label-md text-label-md text-on-surface-variant">Senior Security Engineer</p>
+<p class="font-label-sm text-label-sm text-primary mt-1">ID: 8849-EMP</p>
+</div>
+</div>
+</div>
+<!-- Central Metrics Dashboard -->
+<div class="bg-surface-container rounded-xl border border-outline-variant p-6 space-y-4">
+<h4 class="font-label-md text-label-md text-on-surface-variant mb-2">Analysis Results</h4>
+<!-- Metric 1: Face -->
+<div class="space-y-1">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span>Face Similarity</span>
+<span class="text-error font-bold">0.42 (Threshold 0.50)</span>
+</div>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-error" style="width: 42%;"></div>
+</div>
+</div>
+<!-- Metric 2: Iris -->
+<div class="space-y-1">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span>Iris Similarity</span>
+<span class="text-secondary font-bold">0.81 (Threshold 0.75)</span>
+</div>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-secondary" style="width: 81%;"></div>
+</div>
+</div>
+<!-- Metric 3: Liveness -->
+<div class="space-y-1">
+<div class="flex justify-between font-label-sm text-label-sm">
+<span>Liveness Score</span>
+<span class="text-error font-bold">0.35 (Threshold 0.70)</span>
+</div>
+<div class="h-2 w-full bg-surface-variant rounded-full overflow-hidden">
+<div class="h-full bg-error" style="width: 35%;"></div>
+</div>
+</div>
+</div>
+<!-- Red Warning Alert Box -->
+<div class="bg-error-container/20 border border-error/30 rounded-xl p-4 flex gap-4">
+<span class="material-symbols-outlined text-error" data-weight="fill">warning</span>
+<div>
+<p class="font-label-md text-label-md text-error font-bold">Attack Type: SCREEN_REPLAY_ATTACK</p>
+<p class="font-body-sm text-body-sm text-on-error-container mt-1">Heuristics detected specular mobile screen glare. Captured liveness features do not match natural physiological movement.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Modal Footer (Actions) -->
+<div class="px-8 py-6 border-t border-outline-variant bg-surface-container flex justify-end items-center gap-4">
+<button class="px-6 py-2.5 rounded-lg border border-outline-variant text-on-surface font-label-md text-label-md hover:bg-surface-variant transition-colors">
+          Close Detail
+        </button>
+<button class="px-6 py-2.5 rounded-lg border border-primary text-primary font-label-md text-label-md hover:bg-primary/10 transition-colors">
+          Flag for Review
+        </button>
+<button class="px-8 py-2.5 rounded-lg bg-primary text-on-primary font-label-md text-label-md hover:opacity-90 transition-all Active:scale-95">
+          Acknowledge Alert
+        </button>
+</div>
+</div>
+</div>
+<script>
+    // Minimal JavaScript for modal interactivity
+    document.addEventListener('DOMContentLoaded', () => {
+      const closeBtn = document.querySelector('button.material-symbols-outlined.text-on-surface-variant');
+      const backdrop = document.querySelector('.fixed.inset-0');
+      const closeDetailBtn = document.querySelector('button:contains("Close Detail")');
+
+      const closeModal = () => {
+        backdrop.style.opacity = '0';
+        backdrop.style.pointerEvents = 'none';
+        backdrop.querySelector('div').style.transform = 'scale(0.95)';
+        setTimeout(() => {
+          backdrop.classList.add('hidden');
+        }, 300);
+      };
+
+      closeBtn.addEventListener('click', closeModal);
+    });
+
+    // Custom selector helper for simpler interaction
+    window.jQuery = {
+      contains: (text) => Array.from(document.querySelectorAll('button')).find(el => el.textContent.includes(text))
+    };
+  </script>
+</body></html>

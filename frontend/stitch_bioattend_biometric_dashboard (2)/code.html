@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>BioAttend | Hardware Settings</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&amp;family=Hanken+Grotesk:wght@600;700;800&amp;family=JetBrains+Mono:wght@500&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "surface-container-lowest": "#060e20",
+                        "on-primary": "#1000a9",
+                        "on-primary-fixed-variant": "#2f2ebe",
+                        "on-primary-fixed": "#07006c",
+                        "tertiary-container": "#7c87f3",
+                        "surface-container-high": "#222a3d",
+                        "primary-fixed-dim": "#c0c1ff",
+                        "primary-container": "#8083ff",
+                        "surface-variant": "#2d3449",
+                        "secondary-container": "#00a6e0",
+                        "surface-tint": "#c0c1ff",
+                        "outline": "#908fa0",
+                        "outline-variant": "#464554",
+                        "tertiary-fixed-dim": "#bdc2ff",
+                        "primary": "#c0c1ff",
+                        "on-tertiary-fixed-variant": "#2f3aa3",
+                        "on-tertiary": "#131e8c",
+                        "on-secondary-container": "#00374d",
+                        "background": "#0b1326",
+                        "on-error": "#690005",
+                        "error": "#ffb4ab",
+                        "on-tertiary-container": "#081486",
+                        "on-secondary-fixed": "#001e2c",
+                        "on-surface-variant": "#c7c4d7",
+                        "on-error-container": "#ffdad6",
+                        "inverse-primary": "#494bd6",
+                        "tertiary-fixed": "#e0e0ff",
+                        "surface-container-low": "#131b2e",
+                        "surface": "#0b1326",
+                        "surface-bright": "#31394d",
+                        "inverse-on-surface": "#283044",
+                        "surface-container-highest": "#2d3449",
+                        "surface-container": "#171f33",
+                        "on-tertiary-fixed": "#000767",
+                        "primary-fixed": "#e1e0ff",
+                        "on-surface": "#dae2fd",
+                        "secondary": "#7bd0ff",
+                        "inverse-surface": "#dae2fd",
+                        "surface-dim": "#0b1326",
+                        "secondary-fixed-dim": "#7bd0ff",
+                        "on-secondary-fixed-variant": "#004c69",
+                        "on-primary-container": "#0d0096",
+                        "error-container": "#93000a",
+                        "tertiary": "#bdc2ff",
+                        "on-background": "#dae2fd",
+                        "secondary-fixed": "#c4e7ff",
+                        "on-secondary": "#00354a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "margin-mobile": "16px",
+                        "margin-desktop": "40px",
+                        "unit": "4px",
+                        "gutter-desktop": "24px",
+                        "container-max": "1440px",
+                        "gutter-mobile": "16px"
+                    },
+                    "fontFamily": {
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Hanken Grotesk"],
+                        "label-sm": ["JetBrains Mono"],
+                        "body-lg": ["Inter"],
+                        "body-sm": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "headline-md": ["Hanken Grotesk"],
+                        "display-lg": ["Hanken Grotesk"],
+                        "label-md": ["JetBrains Mono"]
+                    },
+                    "fontSize": {
+                        "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                        "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "500"}],
+                        "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                        "body-sm": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                        "title-lg": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                        "label-md": ["14px", {"lineHeight": "20px", "fontWeight": "500"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #0b1326;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #2d3449;
+            border-radius: 10px;
+        }
+        .glass-panel {
+            background: rgba(23, 31, 51, 0.8);
+            backdrop-filter: blur(12px);
+        }
+        input[type="range"] {
+            -webkit-appearance: none;
+            background: transparent;
+        }
+        input[type="range"]::-webkit-slider-runnable-track {
+            background: #2d3449;
+            height: 4px;
+            border-radius: 2px;
+        }
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #c0c1ff;
+            cursor: pointer;
+            margin-top: -6px;
+        }
+    </style>
+</head>
+<body class="bg-background text-on-background selection:bg-primary-container selection:text-on-primary-container">
+<div class="flex min-h-screen">
+<!-- SideNavBar -->
+<aside class="flex flex-col h-full py-6 gap-2 sticky left-0 top-0 overflow-y-auto bg-surface-container-low dark:bg-surface-container-low docked h-screen w-64 border-r border-outline-variant dark:border-outline-variant transition-all duration-300 z-50">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary" style="font-variation-settings: 'FILL' 1;">fingerprint</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary">BioAttend</h1>
+<p class="text-on-surface-variant font-label-sm text-label-sm uppercase tracking-widest opacity-70">Enterprise Biometrics</p>
+</div>
+</div>
+</div>
+<nav class="flex flex-col gap-1">
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-label-md text-label-md">Dashboard</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="videocam">videocam</span>
+<span class="font-label-md text-label-md">Live Monitor</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="groups">groups</span>
+<span class="font-label-md text-label-md">Staff</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="person_add_alt_1">person_add_alt</span>
+<span class="font-label-md text-label-md">Enrollment</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="receipt_long">receipt_long</span>
+<span class="font-label-md text-label-md">Records</span>
+</a>
+<a class="text-on-surface-variant flex items-center gap-3 px-4 py-3 mx-2 hover:bg-surface-variant rounded-xl transition-all duration-200" href="#">
+<span class="material-symbols-outlined" data-icon="fact_check">fact_check</span>
+<span class="font-label-md text-label-md">Audit Logs</span>
+</a>
+<a class="bg-primary-container text-on-primary-container rounded-xl flex items-center gap-3 px-4 py-3 mx-2 Active: translate-x-1 transition-transform" href="#">
+<span class="material-symbols-outlined" data-icon="settings" style="font-variation-settings: 'FILL' 1;">settings</span>
+<span class="font-label-md text-label-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-6 py-4 border-t border-outline-variant">
+<div class="flex items-center gap-3">
+<img alt="Admin Profile" class="w-10 h-10 rounded-full border-2 border-primary/20" data-alt="Professional corporate headshot of a middle-aged female administrator with a focused and confident expression. The lighting is crisp and cool, set against a blurred high-tech office background that complements the dark navy and indigo UI palette. She wears professional attire, conveying authority and security leadership in a sophisticated biometric software environment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDByeYoZIhlbakdz1--fCHhsmFxshmlOpmeigzMbn603ssioOly2hwabX2Q9EMgwFGb3TnBeV1bOH187jHkbR0n4xIl_29kAaJ24Vvb5nsBO8vBAiAcv-vKOzChv3GuxOO0w3xJ6DJi5p_b552SXDEojsZPnRUfoTcq8LX-_q_-oRVoJYQRX326cG8MoyWd0Z4VrINptqMBJq6QSsn1Il_DIJt22hSd_bTEj3eh4vURsaeCXYgpG1aa1ky83A5i2AMMo01VhuwTT_S"/>
+<div class="overflow-hidden">
+<p class="font-label-md text-label-md text-on-surface truncate">Admin Sarah</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant truncate">System Overlord</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Content Canvas -->
+<main class="flex-1 min-w-0 bg-background overflow-y-auto custom-scrollbar">
+<!-- TopNavBar -->
+<header class="flex justify-between items-center h-16 px-margin-desktop w-full sticky top-0 z-40 bg-surface-container dark:bg-surface-container border-b border-outline-variant dark:border-outline-variant">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-body-md">search</span>
+<input class="w-full bg-surface-container-lowest border-none rounded-xl py-2 pl-10 pr-4 text-body-sm focus:ring-2 focus:ring-primary/50 text-on-surface" placeholder="Search capture nodes..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors">
+<span class="material-symbols-outlined">dark_mode</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors relative">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-2 right-2 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-2"></div>
+<button class="bg-primary text-on-primary font-label-md text-label-md px-6 py-2 rounded-xl flex items-center gap-2 hover:brightness-110 active:scale-95 transition-all" onclick="openConfigPanel()">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                        Add Camera
+                    </button>
+</div>
+</header>
+<div class="p-margin-desktop max-w-container-max mx-auto">
+<div class="flex items-end justify-between mb-8">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Hardware Settings</h2>
+<p class="text-on-surface-variant font-body-md text-body-md">Configure biometric sensors and camera capture nodes across the facility.</p>
+</div>
+<div class="flex gap-2">
+<div class="bg-surface-container-high px-4 py-2 rounded-xl border border-outline-variant flex items-center gap-3">
+<span class="flex h-2 w-2 rounded-full bg-green-500 animate-pulse"></span>
+<span class="font-label-md text-label-md text-on-surface">8 Nodes Online</span>
+</div>
+</div>
+</div>
+<!-- Camera Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter-desktop">
+<!-- Camera Card 01 -->
+<div class="group relative bg-surface-container-low border border-outline-variant rounded-full p-6 cursor-pointer hover:border-primary/50 hover:bg-surface-container transition-all duration-300 overflow-hidden shadow-sm" onclick="openConfigPanel('Main Entrance Cam 01', 'Active', '192.168.1.104', '30 FPS', '1080p')">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-surface-variant rounded-xl text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">videocam</span>
+</div>
+<span class="bg-green-500/10 text-green-400 font-label-sm text-label-sm px-3 py-1 rounded-full border border-green-500/20">Active</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1">Main Entrance Cam 01</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-6">RTSP: 192.168.1.104</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-high rounded-xl p-3 border border-outline-variant/50">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-tighter opacity-70">Framerate</p>
+<p class="font-label-md text-label-md text-primary">30 FPS</p>
+</div>
+<div class="bg-surface-container-high rounded-xl p-3 border border-outline-variant/50">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-tighter opacity-70">Resolution</p>
+<p class="font-label-md text-label-md text-primary">1080p</p>
+</div>
+</div>
+</div>
+<!-- Camera Card 02 -->
+<div class="group relative bg-surface-container-low border border-outline-variant rounded-full p-6 cursor-pointer hover:border-primary/50 hover:bg-surface-container transition-all duration-300 overflow-hidden shadow-sm" onclick="openConfigPanel('Back Door Cam 02', 'Active', 'Webcam Index 0', '24 FPS', '720p')">
+<div class="absolute top-0 left-0 w-1 h-full bg-primary opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-surface-variant rounded-xl text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">camera_indoor</span>
+</div>
+<span class="bg-green-500/10 text-green-400 font-label-sm text-label-sm px-3 py-1 rounded-full border border-green-500/20">Active</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1">Back Door Cam 02</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-6">Device: /dev/video0</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-high rounded-xl p-3 border border-outline-variant/50">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-tighter opacity-70">Framerate</p>
+<p class="font-label-md text-label-md text-primary">24 FPS</p>
+</div>
+<div class="bg-surface-container-high rounded-xl p-3 border border-outline-variant/50">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-tighter opacity-70">Resolution</p>
+<p class="font-label-md text-label-md text-primary">720p</p>
+</div>
+</div>
+</div>
+<!-- Camera Card 03 (Inactive) -->
+<div class="group relative bg-surface-container-low border border-outline-variant rounded-full p-6 cursor-pointer hover:border-error/50 hover:bg-surface-container transition-all duration-300 overflow-hidden shadow-sm opacity-80" onclick="openConfigPanel('Server Room 03', 'Offline', '192.168.1.112', '0 FPS', 'N/A')">
+<div class="absolute top-0 left-0 w-1 h-full bg-error opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-surface-variant rounded-xl text-on-surface-variant">
+<span class="material-symbols-outlined">videocam_off</span>
+</div>
+<span class="bg-error-container text-error font-label-sm text-label-sm px-3 py-1 rounded-full border border-error/20">Offline</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1">Server Room 03</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-6">RTSP: 192.168.1.112</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-high rounded-xl p-3 border border-outline-variant/50">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-tighter opacity-70">Framerate</p>
+<p class="font-label-md text-label-md text-on-surface-variant">0 FPS</p>
+</div>
+<div class="bg-surface-container-high rounded-xl p-3 border border-outline-variant/50">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-tighter opacity-70">Resolution</p>
+<p class="font-label-md text-label-md text-on-surface-variant">N/A</p>
+</div>
+</div>
+</div>
+<!-- Camera Card 04 -->
+<div class="group relative bg-surface-container-low border border-outline-variant rounded-full p-6 cursor-pointer hover:border-primary/50 hover:bg-surface-container transition-all duration-300 overflow-hidden shadow-sm">
+<div class="flex justify-between items-start mb-4">
+<div class="p-3 bg-surface-variant rounded-xl text-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">meeting_room</span>
+</div>
+<span class="bg-green-500/10 text-green-400 font-label-sm text-label-sm px-3 py-1 rounded-full border border-green-500/20">Active</span>
+</div>
+<h3 class="font-title-lg text-title-lg text-on-surface mb-1">Boardroom East</h3>
+<p class="text-on-surface-variant font-body-sm text-body-sm mb-6">RTSP: 192.168.1.108</p>
+<div class="grid grid-cols-2 gap-4">
+<div class="bg-surface-container-high rounded-xl p-3 border border-outline-variant/50">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-tighter opacity-70">Framerate</p>
+<p class="font-label-md text-label-md text-primary">15 FPS</p>
+</div>
+<div class="bg-surface-container-high rounded-xl p-3 border border-outline-variant/50">
+<p class="font-label-sm text-label-sm text-on-surface-variant mb-1 uppercase tracking-tighter opacity-70">Resolution</p>
+<p class="font-label-md text-label-md text-primary">4K</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Bento Style Secondary Stats -->
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-gutter-desktop mt-gutter-desktop">
+<div class="lg:col-span-2 bg-surface-container-low border border-outline-variant rounded-full p-8">
+<h4 class="font-title-lg text-title-lg text-on-surface mb-6">System Health Monitor</h4>
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Inference Latency</span>
+<span class="font-label-md text-label-md text-primary">42ms</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[15%]"></div>
+</div>
+<div class="flex items-center justify-between">
+<span class="font-body-md text-body-md text-on-surface-variant">Storage Utilization (Records)</span>
+<span class="font-label-md text-label-md text-primary">68%</span>
+</div>
+<div class="w-full bg-surface-variant h-2 rounded-full overflow-hidden">
+<div class="bg-primary h-full w-[68%]"></div>
+</div>
+</div>
+</div>
+<div class="bg-tertiary-container/10 border border-tertiary/20 rounded-full p-8 flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-tertiary text-[48px] mb-4">memory</span>
+<p class="font-headline-md text-headline-md text-on-surface">92%</p>
+<p class="font-label-md text-label-md text-on-surface-variant">GPU Load</p>
+</div>
+<div class="bg-secondary-container/10 border border-secondary/20 rounded-full p-8 flex flex-col justify-center items-center text-center">
+<span class="material-symbols-outlined text-secondary text-[48px] mb-4">analytics</span>
+<p class="font-headline-md text-headline-md text-on-surface">0.003%</p>
+<p class="font-label-md text-label-md text-on-surface-variant">False Rejection Rate</p>
+</div>
+</div>
+</div>
+</main>
+</div>
+<!-- Side Configuration Panel -->
+<div class="fixed inset-y-0 right-0 w-full max-w-lg glass-panel border-l border-outline-variant transform translate-x-full transition-transform duration-500 ease-in-out z-[100] flex flex-col" id="configPanel">
+<div class="p-8 border-b border-outline-variant flex items-center justify-between">
+<div>
+<h3 class="font-headline-md text-headline-md text-on-surface" id="panelTitle">Camera Configuration</h3>
+<p class="text-on-surface-variant font-label-md text-label-md" id="panelSubtitle">Node ID: BIO-CAM-01-ENTR</p>
+</div>
+<button class="p-2 text-on-surface-variant hover:bg-surface-variant rounded-full transition-colors" onclick="closeConfigPanel()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-8 custom-scrollbar space-y-8">
+<!-- Test Preview -->
+<section>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-4">Live Test Preview</label>
+<div class="aspect-video w-full bg-black rounded-full overflow-hidden relative border border-outline-variant group">
+<img alt="Camera Feed Preview" class="w-full h-full object-cover opacity-60 group-hover:scale-105 transition-transform duration-700" data-alt="A high-resolution security camera viewpoint of a modern corporate lobby with polished concrete floors and glass partitions. Overlaid on the image are glowing digital bounding boxes and facial recognition mesh markers in vibrant indigo, representing the real-time biometric analysis process. The atmosphere is professional, sleek, and highly technological, with high-contrast cinematic lighting." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBp6mVnkGlVFXxs_RZ0OBcccRiGgk28Yu1ZnBpcVXmAsbu3Mr9surRAyGoQ0Vze211yNhd_gWwyKGfWEDkoSNKzyF1G20YRKjzk00Qw8926wHPvUd9PsKGKuqn-bAFoH5tNWSLMfOUOm6rkKYQVbx_Uw8uhpgA7A1E3ukF82St9xyy8us1OMZCLufLdlctzAtLRylGityvE7YQEyVwvxQgCUVsshe4l19AcQIuOexZSPxu5eQWLruok-lOEox_NAAF3DOMnMAHAyZyA"/>
+<div class="absolute inset-0 flex items-center justify-center">
+<div class="flex flex-col items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[40px] animate-pulse">android_fingerprint</span>
+<p class="font-label-md text-label-md text-on-surface shadow-md">Analysing Stream...</p>
+</div>
+</div>
+<div class="absolute bottom-4 left-4 flex gap-2">
+<span class="bg-black/60 backdrop-blur-md text-[10px] text-white px-2 py-1 rounded border border-white/10 uppercase font-bold tracking-tighter">FPS: 30.2</span>
+<span class="bg-black/60 backdrop-blur-md text-[10px] text-white px-2 py-1 rounded border border-white/10 uppercase font-bold tracking-tighter">BITRATE: 4.2 Mbps</span>
+</div>
+</div>
+</section>
+<!-- Input Settings -->
+<section class="space-y-6">
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-3">Input Source</label>
+<select class="w-full bg-surface-container-lowest border-outline-variant rounded-xl py-3 px-4 text-on-surface focus:ring-primary focus:border-primary">
+<option>Webcam Index 0 (Integrated)</option>
+<option>Webcam Index 1 (External USB)</option>
+<option selected="">RTSP Link (Network Stream)</option>
+</select>
+</div>
+<div>
+<label class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-widest block mb-3">RTSP URL</label>
+<input class="w-full bg-surface-container-lowest border-outline-variant rounded-xl py-3 px-4 text-on-surface font-label-md focus:ring-primary focus:border-primary" type="text" value="rtsp://admin:secret@192.168.1.104:554/live"/>
+</div>
+</section>
+<!-- Biometric Thresholds -->
+<section class="space-y-6 pt-6 border-t border-outline-variant">
+<h4 class="font-title-lg text-title-lg text-on-surface">Detection Thresholds</h4>
+<div class="space-y-4">
+<div class="flex justify-between items-center mb-2">
+<label class="font-body-md text-body-md text-on-surface">Face Threshold</label>
+<span class="font-label-md text-label-md text-primary bg-primary/10 px-2 py-1 rounded" id="faceVal">0.50</span>
+</div>
+<input class="w-full" max="1" min="0" oninput="document.getElementById('faceVal').innerText = parseFloat(this.value).toFixed(2)" step="0.01" type="range" value="0.5"/>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center mb-2">
+<label class="font-body-md text-body-md text-on-surface">Iris Threshold</label>
+<span class="font-label-md text-label-md text-primary bg-primary/10 px-2 py-1 rounded" id="irisVal">0.75</span>
+</div>
+<input class="w-full" max="1" min="0" oninput="document.getElementById('irisVal').innerText = parseFloat(this.value).toFixed(2)" step="0.01" type="range" value="0.75"/>
+</div>
+<div class="space-y-4">
+<div class="flex justify-between items-center mb-2">
+<label class="font-body-md text-body-md text-on-surface">Liveness Threshold</label>
+<span class="font-label-md text-label-md text-primary bg-primary/10 px-2 py-1 rounded" id="liveVal">0.70</span>
+</div>
+<input class="w-full" max="1" min="0" oninput="document.getElementById('liveVal').innerText = parseFloat(this.value).toFixed(2)" step="0.01" type="range" value="0.7"/>
+</div>
+</section>
+</div>
+<div class="p-8 border-t border-outline-variant bg-surface-container flex gap-4">
+<button class="flex-1 border border-outline-variant text-on-surface font-label-md text-label-md py-4 rounded-xl hover:bg-surface-variant transition-colors" onclick="closeConfigPanel()">
+                Cancel
+            </button>
+<button class="flex-1 bg-primary text-on-primary font-label-md text-label-md py-4 rounded-xl hover:brightness-110 active:scale-95 transition-all shadow-lg shadow-primary/20">
+                Save Config
+            </button>
+</div>
+</div>
+<!-- Overlay -->
+<div class="fixed inset-0 bg-background/60 backdrop-blur-sm opacity-0 pointer-events-none transition-opacity duration-500 z-[90]" id="panelOverlay" onclick="closeConfigPanel()"></div>
+<script>
+        function openConfigPanel(name = 'New Camera', status = 'Active', input = '', fps = '', res = '') {
+            const panel = document.getElementById('configPanel');
+            const overlay = document.getElementById('panelOverlay');
+            
+            if(name) {
+                document.getElementById('panelTitle').innerText = name;
+                document.getElementById('panelSubtitle').innerText = 'Configuration for ' + name;
+            }
+
+            panel.classList.remove('translate-x-full');
+            overlay.classList.remove('opacity-0', 'pointer-events-none');
+            overlay.classList.add('opacity-100');
+        }
+
+        function closeConfigPanel() {
+            const panel = document.getElementById('configPanel');
+            const overlay = document.getElementById('panelOverlay');
+            
+            panel.classList.add('translate-x-full');
+            overlay.classList.remove('opacity-100');
+            overlay.classList.add('opacity-0', 'pointer-events-none');
+        }
+
+        // Add a simple entrance animation for cards
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.grid > div');
+            cards.forEach((card, index) => {
+                card.style.opacity = '0';
+                card.style.transform = 'translateY(20px)';
+                setTimeout(() => {
+                    card.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+                    card.style.opacity = '1';
+                    card.style.transform = 'translateY(0)';
+                }, 100 * index);
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,96 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface-container-lowest: #060e20;
+  --color-on-primary: #1000a9;
+  --color-on-primary-fixed-variant: #2f2ebe;
+  --color-on-primary-fixed: #07006c;
+  --color-tertiary-container: #7c87f3;
+  --color-surface-container-high: #222a3d;
+  --color-primary-fixed-dim: #c0c1ff;
+  --color-primary-container: #8083ff;
+  --color-surface-variant: #2d3449;
+  --color-secondary-container: #00a6e0;
+  --color-surface-tint: #c0c1ff;
+  --color-outline: #908fa0;
+  --color-outline-variant: #464554;
+  --color-tertiary-fixed-dim: #bdc2ff;
+  --color-primary: #c0c1ff;
+  --color-on-tertiary-fixed-variant: #2f3aa3;
+  --color-on-tertiary: #131e8c;
+  --color-on-secondary-container: #00374d;
+  --color-background: #0b1326;
+  --color-on-error: #690005;
+  --color-error: #ffb4ab;
+  --color-on-tertiary-container: #081486;
+  --color-on-secondary-fixed: #001e2c;
+  --color-on-surface-variant: #c7c4d7;
+  --color-on-error-container: #ffdad6;
+  --color-inverse-primary: #494bd6;
+  --color-tertiary-fixed: #e0e0ff;
+  --color-surface-container-low: #131b2e;
+  --color-surface: #0b1326;
+  --color-surface-bright: #31394d;
+  --color-inverse-on-surface: #283044;
+  --color-surface-container-highest: #2d3449;
+  --color-surface-container: #171f33;
+  --color-on-tertiary-fixed: #000767;
+  --color-primary-fixed: #e1e0ff;
+  --color-on-surface: #dae2fd;
+  --color-secondary: #7bd0ff;
+  --color-inverse-surface: #dae2fd;
+  --color-surface-dim: #0b1326;
+  --color-secondary-fixed-dim: #7bd0ff;
+  --color-on-secondary-fixed-variant: #004c69;
+  --color-on-primary-container: #0d0096;
+  --color-error-container: #93000a;
+  --color-tertiary: #bdc2ff;
+  --color-on-background: #dae2fd;
+  --color-secondary-fixed: #c4e7ff;
+  --color-on-secondary: #00354a;
+
+  --spacing-margin-mobile: 16px;
+  --spacing-margin-desktop: 40px;
+  --spacing-unit: 4px;
+  --spacing-gutter-desktop: 24px;
+  --spacing-container-max: 1440px;
+  --spacing-gutter-mobile: 16px;
+
+  --font-body-md: "Inter", sans-serif;
+  --font-headline-lg: "Hanken Grotesk", sans-serif;
+  --font-label-sm: "JetBrains Mono", monospace;
+  --font-body-lg: "Inter", sans-serif;
+  --font-body-sm: "Inter", sans-serif;
+  --font-title-lg: "Inter", sans-serif;
+  --font-headline-md: "Hanken Grotesk", sans-serif;
+  --font-display-lg: "Hanken Grotesk", sans-serif;
+  --font-label-md: "JetBrains Mono", monospace;
+}
+
+@layer base {
+  body {
+    @apply bg-background text-on-background font-body-md;
+  }
+}
+
+@layer utilities {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
+  .scanner-line {
+    animation: scan 3s ease-in-out infinite;
+  }
+  @keyframes scan {
+    0%, 100% { top: 0%; opacity: 0; }
+    50% { top: 100%; opacity: 1; }
+  }
+  .bounding-box {
+    border: 2px solid #ffb4ab;
+    box-shadow: 0 0 10px rgba(255, 180, 171, 0.5);
+  }
+  .bounding-box-iris {
+    border: 2px solid #7bd0ff;
+    box-shadow: 0 0 10px rgba(123, 208, 255, 0.5);
+  }
+}
