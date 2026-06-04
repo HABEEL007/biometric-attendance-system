@@ -76,7 +76,7 @@ def manual_checkin(payload: ManualCheckInPayload):
     return {"message": "Attendance marked manually", "record_id": record_id, "staff_name": staff["name"]}
 
 @router.post("/verify-frame")
-def verify_frame(payload: FrameVerificationPayload):
+async def verify_frame(payload: FrameVerificationPayload):
     """
     Main API endpoint for processing frames sent from external client applications.
     Decodes the frame, runs it through the biometric verification pipeline,
@@ -86,5 +86,5 @@ def verify_frame(payload: FrameVerificationPayload):
     if frame is None:
         raise HTTPException(status_code=400, detail="Invalid image encoding")
         
-    result = pipeline.process_frame(frame, camera_id=payload.camera_id)
+    result = await pipeline.process_frame(frame, camera_id=payload.camera_id)
     return result

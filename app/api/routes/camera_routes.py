@@ -44,7 +44,7 @@ def get_camera_status():
     return camera_manager.get_status()
 
 @router.get("/snapshot")
-def process_snapshot():
+async def process_snapshot():
     """Grabs the latest frame from the running camera and runs it through the verification pipeline."""
     global camera_manager
     if camera_manager is None or not camera_manager.is_running:
@@ -54,5 +54,5 @@ def process_snapshot():
     if frame is None:
         raise HTTPException(status_code=503, detail="Camera is active but no frame is captured yet. Try again.")
         
-    result = pipeline.process_frame(frame, camera_id=camera_manager.camera_id)
+    result = await pipeline.process_frame(frame, camera_id=camera_manager.camera_id)
     return result

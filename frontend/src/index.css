@@ -69,7 +69,12 @@
 
 @layer base {
   body {
-    @apply bg-background text-on-background font-body-md;
+    @apply text-on-background font-body-md;
+    background: radial-gradient(circle at 15% 50%, rgba(139, 92, 246, 0.08), transparent 25%),
+                radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.08), transparent 25%),
+                var(--color-background);
+    background-attachment: fixed;
+    min-height: 100vh;
   }
 }
 

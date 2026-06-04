@@ -3,10 +3,12 @@ uvicorn>=0.22.0
 pydantic>=2.0.0
 python-dotenv>=1.0.0
 requests>=2.31.0
+httpx>=0.25.0
 opencv-python>=4.8.0.0
 numpy>=1.24.0
 pillow>=9.5.0
-mediapipe>=0.10.0
+mediapipe==0.10.5
 onnxruntime>=1.15.0
 scipy>=1.10.0
 python-multipart>=0.0.6
+faiss-cpu>=1.7.4

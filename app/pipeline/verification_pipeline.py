@@ -1,6 +1,8 @@
 import cv2
 import numpy as np
 import time
+import asyncio
+import faiss
 from datetime import datetime
 from typing import Dict, Any, Tuple, Optional
 from app.config.settings import settings
@@ -20,6 +22,32 @@ class VerificationPipeline:
         self.face_client = FaceClient()
         self.iris_client = IrisClient()
         self.liveness_client = LivenessClient()
+        self.is_processing = False
+        self._build_faiss_index()
+
+    def _build_faiss_index(self):
+        """Builds a FAISS index from all embeddings in the database."""
+        logger.info("Building FAISS index for face embeddings...")
+        self.faiss_index = faiss.IndexFlatIP(512)
+        self.index_to_staff = {}
+        
+        db_embeddings = db.get_all_face_embeddings()
+        if not db_embeddings:
+            logger.warning("No face embeddings found in database.")
+            return
+
+        # Prepare matrix
+        emb_matrix = np.zeros((len(db_embeddings), 512), dtype=np.float32)
+        for i, (staff_id, emb) in enumerate(db_embeddings):
+            # Ensure it is normalized for IP search (cosine similarity)
+            norm = np.linalg.norm(emb)
+            if norm > 0:
+                emb = emb / norm
+            emb_matrix[i] = emb
+            self.index_to_staff[i] = staff_id
+            
+        self.faiss_index.add(emb_matrix)
+        logger.info(f"FAISS index built with {len(db_embeddings)} faces.")
 
     def check_quality(self, frame: np.ndarray) -> Tuple[bool, str]:
         """Runs quality checks on the raw frame before running heavy AI APIs."""
@@ -43,27 +71,36 @@ class VerificationPipeline:
 
         return True, "Quality Check PASS"
 
-    def process_frame(self, frame: np.ndarray, camera_id: str = "default_cam") -> dict:
+    async def process_frame(self, frame: np.ndarray, camera_id: str = "default_cam") -> dict:
         """
         Main pipeline orchestrator.
         Accepts frame, processes quality, runs face recognition, iris verification, 
         liveness check, decision engine, and records attendance.
         """
-        # 1. Run Quality Check
-        quality_ok, quality_msg = self.check_quality(frame)
-        if not quality_ok:
-            logger.warning(f"Frame quality check failed: {quality_msg}")
+        if self.is_processing:
             return {
                 "success": False,
-                "status": "QUALITY_REJECTED",
-                "message": quality_msg
+                "status": "SKIPPED",
+                "message": "Pipeline busy, frame skipped to maintain FPS"
             }
+            
+        self.is_processing = True
+        try:
+            # 1. Run Quality Check
+            quality_ok, quality_msg = self.check_quality(frame)
+            if not quality_ok:
+                logger.warning(f"Frame quality check failed: {quality_msg}")
+                return {
+                    "success": False,
+                    "status": "QUALITY_REJECTED",
+                    "message": quality_msg
+                }
 
-        # Convert frame to base64 for API requests
-        b64_frame = frame_to_base64(frame)
+            # Convert frame to base64 for API requests
+            b64_frame = frame_to_base64(frame)
 
-        # 2. Hit Face Recognition Service
-        face_data = self.face_client.detect_and_embed(b64_frame)
+            # 2. Hit Face Recognition Service
+            face_data = await self.face_client.detect_and_embed(b64_frame)
         if not face_data or not face_data.get("success"):
             # Log raw detection failure
             db.add_raw_detection_log(
@@ -83,22 +120,22 @@ class VerificationPipeline:
             }
 
         # Face detected successfully
-        face_emb = face_data["embedding"]
+        face_emb = np.array(face_data["embedding"], dtype=np.float32)
         bbox = face_data["bbox"]
         
-        # 3. Database Vector Search (Face Match)
+        # 3. Database Vector Search (Face Match) using FAISS
         identified_staff_id = None
         best_face_score = 0.0
         face_match = False
         
-        db_embeddings = db.get_all_face_embeddings()
-        for staff_id, db_emb in db_embeddings:
-            match_res = self.face_client.match(face_emb, db_emb.tolist())
-            if match_res and match_res.get("match"):
-                similarity = match_res["similarity"]
-                if similarity > best_face_score:
-                    best_face_score = similarity
-                    identified_staff_id = staff_id
+        if self.faiss_index.ntotal > 0:
+            query_emb = np.expand_dims(face_emb, axis=0)
+            D, I = self.faiss_index.search(query_emb, 1)
+            similarity = float(D[0][0])
+            if similarity > settings.FACE_MATCH_THRESHOLD:
+                best_face_score = similarity
+                identified_staff_id = self.index_to_staff.get(int(I[0][0]))
+                if identified_staff_id is not None:
                     face_match = True
 
         # 4. Iris Verification
@@ -108,7 +145,7 @@ class VerificationPipeline:
         
         if face_match and identified_staff_id:
             # Extract current template
-            iris_template_data = self.iris_client.extract_template(b64_frame)
+            iris_template_data = await self.iris_client.extract_template(b64_frame)
             if iris_template_data and iris_template_data.get("success"):
                 curr_template = iris_template_data["template"]
                 
@@ -127,7 +164,7 @@ class VerificationPipeline:
                             db_temp = r_temp
                             
                         if db_temp is not None:
-                            match_res = self.iris_client.match_templates(curr_template, db_temp.tolist())
+                            match_res = await self.iris_client.match_templates(curr_template, db_temp.tolist())
                             if match_res:
                                 iris_score = match_res["similarity"]
                                 iris_match = match_res["match"]
@@ -139,7 +176,7 @@ class VerificationPipeline:
         blink_data = {"eyes_closed": False, "avg_ear": 0.0}
         spoof_data = {"spoof_probability": 1.0, "prediction": "SPOOF"}
         
-        liveness_res = self.liveness_client.check(b64_frame)
+        liveness_res = await self.liveness_client.check(b64_frame)
         if liveness_res and liveness_res.get("success"):
             liveness_score = liveness_res["spoof"]["liveness_score"]
             liveness_passed = liveness_res["liveness_passed"]
@@ -255,3 +292,6 @@ class VerificationPipeline:
             },
             "snapshot_path": snapshot_path
         }
+        
+        finally:
+            self.is_processing = False

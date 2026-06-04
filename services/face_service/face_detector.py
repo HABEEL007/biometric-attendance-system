@@ -10,6 +10,8 @@ from app.utils.gpu_utils import get_onnx_execution_providers
 
 logger = setup_logger("face_detector", "face_service.log")
 
+import threading
+
 class FaceDetector:
     MODEL_URL = "https://github.com/serengil/deepface_models/releases/download/v1.0/arcface_mixed_lfw.onnx"
     MODEL_FILENAME = "arcface_mixed_lfw.onnx"
@@ -18,20 +20,15 @@ class FaceDetector:
         self.base_dir = Path(__file__).resolve().parents[2]
         self.model_dir = self.base_dir / "models"
         self.model_path = self.model_dir / self.MODEL_FILENAME
+        self.use_gpu = use_gpu
+        self.is_ready = False
+        self.session = None
+        self.input_name = None
         
         # Ensure models directory exists
         self.model_dir.mkdir(parents=True, exist_ok=True)
         
-        # Download model if not exists
-        self._ensure_model_exists()
-        
-        # Initialize ONNX session
-        logger.info(f"Loading ArcFace ONNX model from {self.model_path}...")
-        providers = get_onnx_execution_providers(use_gpu)
-        self.session = ort.InferenceSession(str(self.model_path), providers=providers)
-        self.input_name = self.session.get_inputs()[0].name
-        
-        # Initialize MediaPipe Face Mesh
+        # Initialize MediaPipe Face Mesh immediately
         logger.info("Initializing MediaPipe Face Mesh...")
         self.mp_face_mesh = mp.solutions.face_mesh.FaceMesh(
             static_image_mode=False,
@@ -40,6 +37,21 @@ class FaceDetector:
             min_detection_confidence=0.5,
             min_tracking_confidence=0.5
         )
+        
+        # Start background thread for model download and session init
+        threading.Thread(target=self._init_model_async, daemon=True).start()
+
+    def _init_model_async(self):
+        try:
+            self._ensure_model_exists()
+            logger.info(f"Loading ArcFace ONNX model from {self.model_path}...")
+            providers = get_onnx_execution_providers(self.use_gpu)
+            self.session = ort.InferenceSession(str(self.model_path), providers=providers)
+            self.input_name = self.session.get_inputs()[0].name
+            self.is_ready = True
+            logger.info("ArcFace ONNX model loaded successfully and is ready.")
+        except Exception as e:
+            logger.error(f"Failed to initialize FaceDetector background task: {e}")
 
     def _ensure_model_exists(self):
         if not self.model_path.exists():
@@ -64,6 +76,9 @@ class FaceDetector:
         image: BGR numpy image
         returns: dict containing detection success, bounding box, landmarks, and embedding
         """
+        if not self.is_ready:
+            return {"success": False, "message": "Face model is still downloading or initializing"}
+            
         h, w = image.shape[:2]
         rgb_image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         results = self.mp_face_mesh.process(rgb_image)
