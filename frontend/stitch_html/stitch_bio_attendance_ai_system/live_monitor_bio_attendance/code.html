@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "error-container": "#ffdad6",
+                    "secondary-container": "#fcd400",
+                    "outline-variant": "#d4c5ab",
+                    "surface-tint": "#785900",
+                    "surface-container-high": "#f2e7d6",
+                    "error": "#ba1a1a",
+                    "on-surface-variant": "#4f4632",
+                    "surface-bright": "#fff8f2",
+                    "on-surface": "#201b11",
+                    "on-tertiary-container": "#005e6c",
+                    "on-secondary-fixed": "#221b00",
+                    "inverse-on-surface": "#fbefde",
+                    "surface": "#fff8f2",
+                    "on-tertiary": "#ffffff",
+                    "on-error-container": "#93000a",
+                    "tertiary-fixed": "#a5eeff",
+                    "on-primary-container": "#6d5100",
+                    "on-primary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#004e5a",
+                    "primary": "#785900",
+                    "on-background": "#201b11",
+                    "surface-dim": "#e4d9c8",
+                    "surface-container-highest": "#ece1d0",
+                    "on-secondary": "#ffffff",
+                    "primary-container": "#ffc107",
+                    "on-tertiary-fixed": "#001f25",
+                    "surface-container": "#f8ecdb",
+                    "secondary-fixed": "#ffe16d",
+                    "outline": "#827660",
+                    "surface-container-lowest": "#ffffff",
+                    "secondary-fixed-dim": "#e9c400",
+                    "on-secondary-fixed-variant": "#544600",
+                    "inverse-primary": "#fabd00",
+                    "tertiary": "#006877",
+                    "on-primary-fixed-variant": "#5b4300",
+                    "primary-fixed-dim": "#fabd00",
+                    "secondary": "#705d00",
+                    "primary-fixed": "#ffdf9e",
+                    "on-primary-fixed": "#261a00",
+                    "surface-container-low": "#fef2e1",
+                    "inverse-surface": "#363024",
+                    "tertiary-container": "#00defd",
+                    "on-error": "#ffffff",
+                    "background": "#fff8f2",
+                    "tertiary-fixed-dim": "#00daf8",
+                    "on-secondary-container": "#6e5c00",
+                    "surface-variant": "#ece1d0"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "sm": "8px",
+                    "xs": "4px",
+                    "unit": "4px",
+                    "sidebar-width": "260px",
+                    "lg": "24px",
+                    "gutter": "24px",
+                    "margin-mobile": "16px",
+                    "xl": "32px",
+                    "md": "16px"
+            },
+            "fontFamily": {
+                    "display": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-lg-mobile": ["Inter"]
+            },
+            "fontSize": {
+                    "display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .scanning-line {
+            height: 2px;
+            background: #ffc107;
+            box-shadow: 0 0 15px #ffc107;
+            position: absolute;
+            width: 100%;
+            top: 0;
+            animation: scan 3s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 0; }
+            50% { top: 100%; }
+            100% { top: 0; }
+        }
+        .video-corner {
+            width: 20px;
+            height: 20px;
+            border-color: #ffc107;
+            position: absolute;
+        }
+    </style>
+</head>
+<body class="bg-background font-body-md text-on-background min-h-screen">
+<!-- Side Navigation Bar -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 border-r border-outline-variant flex flex-col justify-between py-lg px-0 bg-surface z-50">
+<div>
+<div class="px-md mb-xl">
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">Bio Attendance</h1>
+<p class="text-label-md text-on-surface-variant">Enterprise Biometrics</p>
+</div>
+<nav class="space-y-1">
+<a class="flex items-center px-lg py-sm text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold" href="#">
+<span class="material-symbols-outlined mr-md">dashboard</span>
+                    Dashboard
+                </a>
+<a class="flex items-center px-lg py-sm border-l-4 border-primary bg-secondary-container/20 text-on-surface font-body-md font-semibold" href="#">
+<span class="material-symbols-outlined mr-md">videocam</span>
+                    Live Monitor
+                </a>
+<a class="flex items-center px-lg py-sm text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold" href="#">
+<span class="material-symbols-outlined mr-md">person_add</span>
+                    Enrollment
+                </a>
+<a class="flex items-center px-lg py-sm text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold" href="#">
+<span class="material-symbols-outlined mr-md">groups</span>
+                    Staff
+                </a>
+<a class="flex items-center px-lg py-sm text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold" href="#">
+<span class="material-symbols-outlined mr-md">history</span>
+                    Records
+                </a>
+<a class="flex items-center px-lg py-sm text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold" href="#">
+<span class="material-symbols-outlined mr-md">assignment_turned_in</span>
+                    Audit Logs
+                </a>
+<a class="flex items-center px-lg py-sm text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold" href="#">
+<span class="material-symbols-outlined mr-md">settings</span>
+                    Settings
+                </a>
+</nav>
+</div>
+<div class="px-lg pb-lg">
+<a class="flex items-center py-sm text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 font-body-md font-semibold" href="#">
+<span class="material-symbols-outlined mr-md">logout</span>
+                Logout
+            </a>
+</div>
+</aside>
+<!-- Top Navigation Bar -->
+<header class="flex justify-between items-center px-lg w-[calc(100%-260px)] ml-[260px] h-16 fixed top-0 bg-surface border-b border-outline-variant shadow-sm z-40">
+<div class="flex items-center bg-surface-container-low px-md py-xs rounded-lg border border-outline-variant w-96">
+<span class="material-symbols-outlined text-on-surface-variant mr-xs">search</span>
+<input class="bg-transparent border-none focus:ring-0 text-body-md w-full" placeholder="Search logs, staff or devices..." type="text"/>
+</div>
+<div class="flex items-center gap-md">
+<button class="p-xs hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="p-xs hover:text-primary transition-colors">
+<span class="material-symbols-outlined">schedule</span>
+</button>
+<div class="h-8 w-px bg-outline-variant mx-xs"></div>
+<span class="text-body-md font-semibold">Admin User</span>
+<img alt="Administrator Profile" class="w-8 h-8 rounded-full border border-outline" src="https://lh3.googleusercontent.com/aida-public/AB6AXuAk5olmXckKj-fWhHYiHmrScacYOYjptsTNm3JkstXGdAHr9BB9uY1AMZXG-4YpxKQTFewokRjss5sy8yhikiNLqOUSthn16BE95uSuN7y6Taeq6IC8H2s2jcnXNE0DnG9ahx8I6_YoqODU2wZ_fJRpXWQu8E1CQuUF9LfzGmkWT2zcB4KGpiq9gZ7mJnVtqCVGlN6nzV9ej--KRvhzBp4FYfMAphY4UlWxjXdA20JVywmbv4qBpg5acR7Ddu85PvavyDgQW6IeQGE"/>
+</div>
+</header>
+<!-- Main Content Area -->
+<main class="ml-[260px] pt-16 p-lg">
+<div class="grid grid-cols-12 gap-lg">
+<!-- Video Feed Section -->
+<div class="col-span-8 flex flex-col gap-md">
+<div class="flex justify-between items-end mb-xs">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Live Monitoring</h2>
+<p class="text-body-md text-on-surface-variant">Real-time biometric authentication stream</p>
+</div>
+<div class="flex gap-sm">
+<select class="bg-surface border border-outline-variant rounded-lg px-md py-xs text-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none">
+<option>Local Webcam</option>
+<option>External Camera 1</option>
+<option>External Camera 2</option>
+</select>
+<button class="bg-primary-container text-on-primary-container px-lg py-xs rounded-lg font-bold shadow-sm hover:opacity-90 transition-opacity flex items-center gap-xs">
+<span class="material-symbols-outlined">play_arrow</span>
+                            Start Monitoring
+                        </button>
+</div>
+</div>
+<!-- Main Video Frame -->
+<div class="relative bg-white border-4 border-primary-container rounded-xl overflow-hidden aspect-video shadow-lg group">
+<img alt="Main Video Feed" class="w-full h-full object-cover grayscale-[20%]" data-alt="A cinematic high-definition security camera feed view of a modern corporate lobby with clean lines and bright lighting. The scene is slightly desaturated to emphasize professional surveillance. In the center, a digital scanning overlay is visible with thin yellow bounding boxes tracking human movement. The atmosphere is high-tech, secure, and corporate." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDPaCxd5eVYUFemX3M6hAnONxcT-Bl_wAcNdccQob7ItArl2nGsqBFgW0onExKrSgn5TS_mdetguieA6k6vf6v58XycE26Qm6n5v6LychZeRpTEuGUkc7a-yb3rAnVTe4Vsau2XPif99jdWyXX9Cjwo-GprK8yhqom0-hgJYP0F_n9ZzJEMGna7IgccgQ7gd7K_5GNr3DvYPeeEWB7JaI3M127TIYezVVChZP4MNOPWgRD84_BImWEbtRSzUqukTIn4gVtAA35Sy-w"/>
+<!-- Scanning HUD -->
+<div class="absolute inset-0 pointer-events-none">
+<div class="scanning-line"></div>
+<div class="absolute top-md left-md bg-black/60 text-white px-md py-xs rounded flex items-center gap-xs">
+<div class="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
+<span class="text-label-md">LIVE RECAP</span>
+</div>
+<!-- Tracking Overlays (Visual elements) -->
+<div class="absolute top-1/4 left-1/3 w-48 h-48 border-2 border-primary-container/60">
+<div class="video-corner top-0 left-0 border-t-4 border-l-4"></div>
+<div class="video-corner top-0 right-0 border-t-4 border-r-4"></div>
+<div class="video-corner bottom-0 left-0 border-b-4 border-l-4"></div>
+<div class="video-corner bottom-0 right-0 border-b-4 border-r-4"></div>
+<div class="absolute -top-6 left-0 bg-primary-container text-on-primary-container px-xs text-[10px] font-bold">SCANNING FACE...</div>
+</div>
+</div>
+</div>
+<!-- Last 5 Detections (Horizontal Scroll/List) -->
+<div class="bg-surface border border-outline-variant rounded-xl p-md shadow-sm">
+<h3 class="text-label-md text-on-surface-variant uppercase tracking-wider mb-md">Recent Events</h3>
+<div class="flex gap-md overflow-x-auto pb-xs">
+<!-- Detection Item -->
+<div class="flex-shrink-0 w-48 bg-surface-container-low rounded-lg p-xs border border-outline-variant hover:border-primary-container transition-colors cursor-pointer">
+<div class="relative h-24 rounded overflow-hidden mb-xs">
+<img class="w-full h-full object-cover" data-alt="A close-up high-contrast headshot of a professional man in a business suit for a corporate identification system. The lighting is neutral and even, against a light gray studio background. The visual style is crisp and clear, following enterprise photography standards for biometric enrollment." src="https://lh3.googleusercontent.com/aida-public/AB6AXuABdEpNtqMFq6lrgyI-Rj7IlujL7CpV9doh6rX1dc8T6lT6HJFRxKd2y1dKTb1nPFP5FVa8O8-T_qUNm5Tj4b3SJecr8_73rK5MZLtFG5WZqAH3ASaj9xy1GW_nSWHlbvdLr55-EZqEgC23NzjAhGY52T4iKogT-DLzi6SpjibQwnNVe-iCQEy0iQfI45_EvZXVFTPpoHqwCSm22juR7QkGZJa3KmO-Ter9U1NTa31GVACe5M4ZD5jCFBv2jnmZ02jI0F7y0dgWBNI"/>
+<div class="absolute bottom-0 right-0 bg-green-100 text-green-800 px-xs rounded-tl text-[10px] font-bold">PASS</div>
+</div>
+<p class="text-label-md font-bold truncate">David Chen</p>
+<p class="text-[10px] text-on-surface-variant">Today, 09:42 AM</p>
+</div>
+<!-- Detection Item -->
+<div class="flex-shrink-0 w-48 bg-surface-container-low rounded-lg p-xs border border-outline-variant hover:border-primary-container transition-colors cursor-pointer">
+<div class="relative h-24 rounded overflow-hidden mb-xs">
+<img class="w-full h-full object-cover" data-alt="A sharp, well-lit portrait of a professional woman with a friendly but serious expression, suitable for high-end corporate access control systems. The background is a clean white, emphasizing the subject's face for biometric recognition. The overall aesthetic is professional, minimalist, and high-tech." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDgF2nRcwgWaZdl_hPmbWc5YXv4kEJMhRrpGyMRev6g4-_tCGCShLIN9t633D14o7uYYJ7PWrhuMMoq8v_gabqTThCkP1XIBIEMNJqOvnf7t-4-wITUI0k4xwdqm1Ce7FhgY_DyyP0B3LDNHcRNuX3L_bEi-ubZZO5G0g7ZHRBpc59Dy6u61Sq_wsrjPfZvggy_xknsjOqG-0pv1CJ_fGOVGM6mh_IVGQgmouYQnVtd6l3X2OgCXDTHQKbT3nLSaGtPf6g8fj5GFUw"/>
+<div class="absolute bottom-0 right-0 bg-green-100 text-green-800 px-xs rounded-tl text-[10px] font-bold">PASS</div>
+</div>
+<p class="text-label-md font-bold truncate">Sarah Jenkins</p>
+<p class="text-[10px] text-on-surface-variant">Today, 09:38 AM</p>
+</div>
+<!-- Detection Item -->
+<div class="flex-shrink-0 w-48 bg-surface-container-low rounded-lg p-xs border border-outline-variant hover:border-primary-container transition-colors cursor-pointer">
+<div class="relative h-24 rounded overflow-hidden mb-xs">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a middle-aged man in business attire, captured with high-resolution clarity for a facial recognition database. The image uses a high-key lighting setup with a subtle neutral backdrop to ensure clear biometric markers are visible. The mood is authoritative and efficient." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBCV-vaPtbpzLJeMY5YjsFwE2EAlkr8moetLAiG9Q2MZVcFufH12Ao2x4Qa8kzwcCQ4EFk6umbR04HUI7WOSBVYpqMzo7ynBHJ6mCCO69ILkiGDKbj-Sl0HuPQkb4HLRVKqYFioldgKeg7iM6VE2mxFqEfWQ8wHsIL40UaaMg5tsJbNjahefw0peywNYPsA8QZxbBL25f3NbKbE_SRmifNDktVbYchIZ2hhCoDb3PC_K09QOQbMWOXkf-TdtQbOvOZBTil0_dD6_KI"/>
+<div class="absolute bottom-0 right-0 bg-green-100 text-green-800 px-xs rounded-tl text-[10px] font-bold">PASS</div>
+</div>
+<p class="text-label-md font-bold truncate">Marcus Thorne</p>
+<p class="text-[10px] text-on-surface-variant">Today, 09:35 AM</p>
+</div>
+<!-- Detection Item -->
+<div class="flex-shrink-0 w-48 bg-surface-container-low rounded-lg p-xs border border-outline-variant hover:border-primary-container transition-colors cursor-pointer">
+<div class="relative h-24 rounded overflow-hidden mb-xs">
+<img class="w-full h-full object-cover" data-alt="Detailed professional headshot of a female office employee for an enterprise security system. The image is bright and sharp, with soft shadows and a light-colored professional environment in the background. The style is clean, modern corporate photography with emphasis on biometric accuracy." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCvG6tc3BuHI1Tk-s-V2jo56cnul1m5nyTLpDHIkQLB4RYsLL4ZXrvsWeTi14WNk2XFhQk-byg30RBLSl1hdPEBrMkdmQpUbpIlb27vUW4RGvG0xk-lsgh8AmI55zJm0ceYglKYMn8JI94jl_UZtCEubwXZN0tctPk_X8HZ6Q3PJr346X-5zoP7s6DK5QQdGB7O5Mf5S7pmUp-HSs4nUoR1yxJNU3S5PGpduhpOfowJi1q3Jj16HELe0SZE0_MHOdlud1OJRdlhNzM"/>
+<div class="absolute bottom-0 right-0 bg-green-100 text-green-800 px-xs rounded-tl text-[10px] font-bold">PASS</div>
+</div>
+<p class="text-label-md font-bold truncate">Elena Rodriguez</p>
+<p class="text-[10px] text-on-surface-variant">Today, 09:31 AM</p>
+</div>
+<!-- Detection Item -->
+<div class="flex-shrink-0 w-48 bg-surface-container-low rounded-lg p-xs border border-outline-variant hover:border-primary-container transition-colors cursor-pointer">
+<div class="relative h-24 rounded overflow-hidden mb-xs">
+<img class="w-full h-full object-cover" data-alt="A clean, studio-lit professional portrait of a man wearing glasses, intended for an advanced biometric security profile. The image features high contrast and sharp focus on facial features. The background is a soft, minimalist grey, creating a sleek and modern look for corporate identity software." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDfG2SLWLWV1Pm0RfuSuNxWPs1wSo6aNT4aBIzKh_x8pqG32TJKwZVyeirc20Ow07EvteJ5QZvHGUvhgpJjJt25A4xPazdCixTBA0bnMxuOG7mnXErrSVcczr1twZxpIuZN-KwM1uBfF8MTkhavcdIm1BeWAqZNITXWxqqJNEFMfn5IT7U-af_JzZm-LJihWxQtLN3dSnkLIaRUMmU2-Y0BNx6ayYEsjp7mkHXnwbONqzQbdk1Zi_dcNUauP75eITdO-nEZub52Ixk"/>
+<div class="absolute bottom-0 right-0 bg-green-100 text-green-800 px-xs rounded-tl text-[10px] font-bold">PASS</div>
+</div>
+<p class="text-label-md font-bold truncate">Samir Al-Fayed</p>
+<p class="text-[10px] text-on-surface-variant">Today, 09:28 AM</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Analysis & Info Sidebar -->
+<div class="col-span-4 flex flex-col gap-lg">
+<!-- Real-time Results Panel -->
+<section class="bg-surface border border-outline-variant rounded-xl p-lg shadow-sm">
+<h3 class="text-headline-md font-bold mb-lg flex items-center gap-xs">
+<span class="material-symbols-outlined text-primary">analytics</span>
+                        Analysis Status
+                    </h3>
+<div class="space-y-lg">
+<div class="flex items-center justify-between">
+<span class="text-body-md font-semibold text-on-surface-variant">Face Match Status</span>
+<span class="bg-green-100 text-green-800 px-md py-xs rounded-full text-label-md font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> 98%
+                            </span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-md font-semibold text-on-surface-variant">Iris Verification</span>
+<span class="bg-green-100 text-green-800 px-md py-xs rounded-full text-label-md font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> 99%
+                            </span>
+</div>
+<div class="flex items-center justify-between">
+<span class="text-body-md font-semibold text-on-surface-variant">Liveness Check</span>
+<span class="bg-green-100 text-green-800 px-md py-xs rounded-full text-label-md font-bold flex items-center gap-xs">
+<span class="material-symbols-outlined text-[16px]">check_circle</span> VALID
+                            </span>
+</div>
+<hr class="border-outline-variant"/>
+<div class="bg-secondary-container/10 border border-secondary-container p-md rounded-lg flex items-center justify-between">
+<div>
+<p class="text-label-md font-bold text-on-secondary-container uppercase">Final Decision</p>
+<p class="text-headline-md font-bold text-primary">ACCESS GRANTED</p>
+</div>
+<div class="w-12 h-12 rounded-full bg-primary-container flex items-center justify-center text-on-primary-container">
+<span class="material-symbols-outlined text-[32px]">verified</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Current Employee Card -->
+<section class="bg-surface border border-outline-variant rounded-xl overflow-hidden shadow-sm">
+<div class="bg-primary-container p-md flex items-center gap-md">
+<img class="w-16 h-16 rounded-lg object-cover border-2 border-white shadow-sm" data-alt="A professional biometric ID photo showing a man's face with high clarity. He is centered in the frame against a neutral background. The lighting is optimized for facial recognition systems, creating clear definition of all facial features. The overall look is professional and fits the corporate identity guidelines." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBb2oaOfR-9iocwvBnXzwIusvM4Wpn1u802e3ATP4B0SPkVPXtzYFJphObUWNw5BLMWZ9fI2Fs6h9gi7isgrg9JATo4DEK3Sc-ttSPel6O7ZIn-h95gOZVAg3uNULa4d_sqBHDBEJOhSmptdd9BYg560QzrqAx1Bx0xWJhSeg4XvaDNbmqBCpNUS0Sjc5gfoCeWba7QXcPgY7F3yIkiSM9-sVe-n-PI48eDO4_JzAOu4-s64y7xa12rmxxtORxaiLhgE9fAIo7sc6Y"/>
+<div class="text-on-primary-container">
+<h4 class="font-bold text-headline-md leading-tight">David Chen</h4>
+<p class="text-label-md opacity-90">ID: #BIO-45920</p>
+</div>
+</div>
+<div class="p-lg space-y-md">
+<div class="grid grid-cols-2 gap-md">
+<div>
+<p class="text-label-md text-on-surface-variant">Department</p>
+<p class="text-body-md font-bold">Engineering</p>
+</div>
+<div>
+<p class="text-label-md text-on-surface-variant">Position</p>
+<p class="text-body-md font-bold">Lead Developer</p>
+</div>
+<div>
+<p class="text-label-md text-on-surface-variant">Access Level</p>
+<p class="text-body-md font-bold text-primary">Tier 4 (Unrestricted)</p>
+</div>
+<div>
+<p class="text-label-md text-on-surface-variant">Clock-In Time</p>
+<p class="text-body-md font-bold">09:42:15 AM</p>
+</div>
+</div>
+<button class="w-full mt-md outline outline-1 outline-outline-variant text-on-surface py-sm rounded-lg font-semibold hover:bg-surface-container-high transition-colors">
+                            View Full Profile
+                        </button>
+</div>
+</section>
+<!-- System Stats Mini-Bento -->
+<div class="grid grid-cols-2 gap-md">
+<div class="bg-surface border border-outline-variant p-md rounded-xl shadow-sm">
+<p class="text-label-md text-on-surface-variant">System Uptime</p>
+<p class="text-headline-md font-bold text-on-surface">99.9%</p>
+</div>
+<div class="bg-surface border border-outline-variant p-md rounded-xl shadow-sm">
+<p class="text-label-md text-on-surface-variant">Detection Latency</p>
+<p class="text-headline-md font-bold text-on-surface">140ms</p>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Interactions Layer (Scripts) -->
+<script>
+        // Simple click interaction for the 'Start Monitoring' button
+        const monitorBtn = document.querySelector('button:has(.material-symbols-outlined:contains("play_arrow"))');
+        if(monitorBtn) {
+            monitorBtn.addEventListener('click', function() {
+                const icon = this.querySelector('.material-symbols-outlined');
+                const text = Array.from(this.childNodes).find(n => n.nodeType === Node.TEXT_NODE && n.textContent.trim().length > 0);
+                
+                if (icon.textContent === 'play_arrow') {
+                    icon.textContent = 'stop';
+                    text.textContent = 'Stop Monitoring';
+                    this.classList.remove('bg-primary-container');
+                    this.classList.add('bg-error', 'text-white');
+                } else {
+                    icon.textContent = 'play_arrow';
+                    text.textContent = 'Start Monitoring';
+                    this.classList.add('bg-primary-container');
+                    this.classList.remove('bg-error', 'text-white');
+                }
+            });
+        }
+        
+        // Helper to find text content in icons for non-standard selectors
+        window.onload = function() {
+            const icons = document.querySelectorAll('.material-symbols-outlined');
+            icons.forEach(icon => {
+                if(icon.textContent.includes('play_arrow')) {
+                    const btn = icon.closest('button');
+                    if(btn) {
+                        btn.addEventListener('mousedown', () => btn.style.transform = 'scale(0.98)');
+                        btn.addEventListener('mouseup', () => btn.style.transform = 'scale(1)');
+                    }
+                }
+            });
+        };
+    </script>
+</body></html>

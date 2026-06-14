@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Staff Directory | Bio Attendance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+                  "error-container": "#ffdad6",
+                  "secondary-container": "#fcd400",
+                  "outline-variant": "#d4c5ab",
+                  "surface-tint": "#785900",
+                  "surface-container-high": "#f2e7d6",
+                  "error": "#ba1a1a",
+                  "on-surface-variant": "#4f4632",
+                  "surface-bright": "#fff8f2",
+                  "on-surface": "#201b11",
+                  "on-tertiary-container": "#005e6c",
+                  "on-secondary-fixed": "#221b00",
+                  "inverse-on-surface": "#fbefde",
+                  "surface": "#fff8f2",
+                  "on-tertiary": "#ffffff",
+                  "on-error-container": "#93000a",
+                  "tertiary-fixed": "#a5eeff",
+                  "on-primary-container": "#6d5100",
+                  "on-primary": "#ffffff",
+                  "on-tertiary-fixed-variant": "#004e5a",
+                  "primary": "#785900",
+                  "on-background": "#201b11",
+                  "surface-dim": "#e4d9c8",
+                  "surface-container-highest": "#ece1d0",
+                  "on-secondary": "#ffffff",
+                  "primary-container": "#ffc107",
+                  "on-tertiary-fixed": "#001f25",
+                  "surface-container": "#f8ecdb",
+                  "secondary-fixed": "#ffe16d",
+                  "outline": "#827660",
+                  "surface-container-lowest": "#ffffff",
+                  "secondary-fixed-dim": "#e9c400",
+                  "on-secondary-fixed-variant": "#544600",
+                  "inverse-primary": "#fabd00",
+                  "tertiary": "#006877",
+                  "on-primary-fixed-variant": "#5b4300",
+                  "primary-fixed-dim": "#fabd00",
+                  "secondary": "#705d00",
+                  "primary-fixed": "#ffdf9e",
+                  "on-primary-fixed": "#261a00",
+                  "surface-container-low": "#fef2e1",
+                  "inverse-surface": "#363024",
+                  "tertiary-container": "#00defd",
+                  "on-error": "#ffffff",
+                  "background": "#fff8f2",
+                  "tertiary-fixed-dim": "#00daf8",
+                  "on-secondary-container": "#6e5c00",
+                  "surface-variant": "#ece1d0"
+          },
+          "borderRadius": {
+                  "DEFAULT": "0.25rem",
+                  "lg": "0.5rem",
+                  "xl": "0.75rem",
+                  "full": "9999px"
+          },
+          "spacing": {
+                  "sm": "8px",
+                  "xs": "4px",
+                  "unit": "4px",
+                  "sidebar-width": "260px",
+                  "lg": "24px",
+                  "gutter": "24px",
+                  "margin-mobile": "16px",
+                  "xl": "32px",
+                  "md": "16px"
+          },
+          "fontFamily": {
+                  "display": ["Inter"],
+                  "body-lg": ["Inter"],
+                  "headline-lg": ["Inter"],
+                  "body-md": ["Inter"],
+                  "headline-md": ["Inter"],
+                  "label-md": ["Inter"],
+                  "headline-lg-mobile": ["Inter"]
+          },
+          "fontSize": {
+                  "display": ["36px", {"lineHeight": "44px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                  "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                  "headline-lg": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                  "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                  "headline-md": ["20px", {"lineHeight": "28px", "fontWeight": "600"}],
+                  "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                  "headline-lg-mobile": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+          }
+        },
+      },
+    }
+  </script>
+<style>
+    body {
+      background-color: #F8F9FA;
+      color: #1F2937;
+      font-family: 'Inter', sans-serif;
+    }
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+    .staff-table-row:hover {
+      background-color: #FEF3C7;
+      transition: background-color 0.2s ease;
+    }
+    .custom-scrollbar::-webkit-scrollbar {
+      width: 6px;
+    }
+    .custom-scrollbar::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    .custom-scrollbar::-webkit-scrollbar-thumb {
+      background: #E5E7EB;
+      border-radius: 10px;
+    }
+  </style>
+</head>
+<body class="bg-background text-on-background">
+<!-- Side Navigation Shell -->
+<aside class="w-[260px] h-screen fixed left-0 top-0 bg-surface dark:bg-surface-dim border-r border-outline-variant dark:border-outline flex flex-col justify-between py-lg px-0 z-50">
+<div>
+<div class="px-lg mb-xl flex items-center gap-md">
+<div class="w-10 h-10 rounded-lg bg-primary flex items-center justify-center text-on-primary">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">fingerprint</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-on-surface">Bio Attendance</h1>
+<p class="text-[10px] uppercase tracking-widest text-on-surface-variant font-bold">Enterprise Biometrics</p>
+</div>
+</div>
+<nav class="flex flex-col gap-xs">
+<a class="flex items-center gap-md py-md px-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-body-md text-body-md font-semibold" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span>Dashboard</span>
+</a>
+<a class="flex items-center gap-md py-md px-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-body-md text-body-md font-semibold" href="#">
+<span class="material-symbols-outlined">videocam</span>
+<span>Live Monitor</span>
+</a>
+<a class="flex items-center gap-md py-md px-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-body-md text-body-md font-semibold" href="#">
+<span class="material-symbols-outlined">person_add</span>
+<span>Enrollment</span>
+</a>
+<!-- Active Tab: Staff -->
+<a class="flex items-center gap-md py-md px-lg border-l-4 border-primary bg-secondary-container/20 text-on-surface font-body-md text-body-md font-semibold" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">groups</span>
+<span>Staff</span>
+</a>
+<a class="flex items-center gap-md py-md px-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-body-md text-body-md font-semibold" href="#">
+<span class="material-symbols-outlined">history</span>
+<span>Records</span>
+</a>
+<a class="flex items-center gap-md py-md px-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-body-md text-body-md font-semibold" href="#">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+<span>Audit Logs</span>
+</a>
+<a class="flex items-center gap-md py-md px-lg text-on-surface-variant hover:bg-surface-container-high transition-colors font-body-md text-body-md font-semibold" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span>Settings</span>
+</a>
+</nav>
+</div>
+<div class="px-lg border-t border-outline-variant pt-lg">
+<a class="flex items-center gap-md py-md text-on-surface-variant hover:text-error transition-colors font-body-md text-body-md font-semibold" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span>Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Content Wrapper -->
+<main class="ml-[260px] min-h-screen flex flex-col">
+<!-- Top Navigation Bar -->
+<header class="h-16 flex justify-between items-center px-lg bg-surface dark:bg-surface-container-lowest border-b border-outline-variant sticky top-0 z-40">
+<div class="flex items-center gap-lg flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px]">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant rounded-lg py-2 pl-10 pr-4 text-body-md focus:outline-none focus:border-primary transition-all" placeholder="Global search..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-lg">
+<button class="relative text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full border-2 border-surface"></span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">schedule</span>
+</button>
+<div class="h-8 w-[1px] bg-outline-variant"></div>
+<div class="flex items-center gap-md">
+<div class="text-right hidden sm:block">
+<p class="font-label-md text-label-md text-on-surface leading-none">Admin User</p>
+<p class="text-[10px] text-on-surface-variant">System Overseer</p>
+</div>
+<img alt="Administrator Profile" class="w-10 h-10 rounded-full border border-outline-variant" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB6RsVHlyoOClQeUAkruk2t6cjYtAgu8pVk8bnTMYN-29kQvbUoDXoYld6Gx1mY7UdVM2CDF17bGDuBixIYJ-hwtK7BWkYY58t3yW8lE1Jhm1am3k0oKBuqYhhJH2AI1iTw_ZsheL9M9nX9dk3qZQczjqMRYb2LnBxmX37QcAkhfWhXCQc3enkKoynqCvHrsmVO_8ItFuySi5NuSL6bbPl3HoeAe_C-kz2IODJV6atq3d95LgrUuJputANw_Th8IWtu_6GaC4gpUNw"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<section class="p-lg lg:p-xl space-y-lg">
+<!-- Header Section -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-md">
+<div>
+<nav class="flex items-center gap-xs text-label-md text-on-surface-variant mb-xs">
+<span>Resources</span>
+<span class="material-symbols-outlined text-[14px]">chevron_right</span>
+<span class="text-primary font-bold">Staff Directory</span>
+</nav>
+<h2 class="font-headline-lg text-headline-lg text-on-surface">Staff Directory</h2>
+<p class="font-body-md text-body-md text-on-surface-variant">Manage and monitor biometric enrollment for your enterprise workforce.</p>
+</div>
+<button class="bg-primary-container text-on-primary-container px-lg py-md rounded-lg font-body-md font-bold flex items-center gap-sm shadow-sm hover:opacity-90 active:scale-95 transition-all">
+<span class="material-symbols-outlined">person_add</span>
+          Add New Staff
+        </button>
+</div>
+<!-- Filters Bento Area -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-md">
+<div class="md:col-span-2 bg-surface border border-outline-variant rounded-xl p-md flex items-center gap-md shadow-sm">
+<div class="flex-1 relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">person_search</span>
+<input class="w-full bg-surface-container-lowest border-none focus:ring-0 text-body-md py-1 pl-10" placeholder="Search by name, ID or department..." type="text"/>
+</div>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-md flex items-center justify-between shadow-sm cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">category</span>
+<span class="text-body-md text-on-surface">Department</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-md flex items-center justify-between shadow-sm cursor-pointer hover:bg-surface-container-low transition-colors">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-on-surface-variant">verified_user</span>
+<span class="text-body-md text-on-surface">Status</span>
+</div>
+<span class="material-symbols-outlined text-on-surface-variant">expand_more</span>
+</div>
+</div>
+<!-- Staff Table Container -->
+<div class="bg-surface border border-outline-variant rounded-xl shadow-sm overflow-hidden flex flex-col">
+<div class="overflow-x-auto custom-scrollbar">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container text-on-surface-variant border-b border-outline-variant">
+<th class="px-lg py-md font-label-md text-label-md uppercase tracking-wider">ID</th>
+<th class="px-lg py-md font-label-md text-label-md uppercase tracking-wider">Staff Name</th>
+<th class="px-lg py-md font-label-md text-label-md uppercase tracking-wider">Department</th>
+<th class="px-lg py-md font-label-md text-label-md uppercase tracking-wider">Enrollment Date</th>
+<th class="px-lg py-md font-label-md text-label-md uppercase tracking-wider">Status</th>
+<th class="px-lg py-md font-label-md text-label-md uppercase tracking-wider text-right">Actions</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Row 1 -->
+<tr class="staff-table-row transition-colors group">
+<td class="px-lg py-md font-body-md text-on-surface font-semibold">#BA-9021</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<img alt="Staff Portrait" class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20" data-alt="A clean professional headshot of a corporate employee in a brightly lit office setting. The person is smiling slightly, representing approachable professionalism. The background is a soft, out-of-focus modern office interior with warm golden accents and neutral gray tones, matching a sleek minimalist corporate design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDc4LSNV_INQCI6YT7msfzUrZXXWegjwwt-J7WbYAJ18BC19Ge3Cnki8PC9rorhlmMYSqBbZAkaq2XoIw8WbeBX9oLBvgtJGm0AriXVtwhPZCwSqAL0xa6P8SyWD5CsMcYHSL37AyFhK99gjlynuCL4NDrwVyPFR05Kw1YyS93X-ZYQ5ew1KXTEcY5uDk-oM_uaACC6isVOkesliHKYq-SKChI5KDXw8_mlklzo93GPl0aUhq0oE0fsNWBYeTsDfXLtqJ8I68ZuQ54"/>
+<span class="font-body-md text-on-surface">Adrian Dubois</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-on-surface-variant">Engineering</td>
+<td class="px-lg py-md font-body-md text-on-surface-variant">Oct 12, 2023</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-green-100 text-green-700 font-label-md text-[10px] uppercase">Active</span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary" title="View"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary" title="Edit"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-error" title="Delete"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="staff-table-row transition-colors group">
+<td class="px-lg py-md font-body-md text-on-surface font-semibold">#BA-9022</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<img alt="Staff Portrait" class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20" data-alt="A high-quality professional portrait of a business woman in her early 30s wearing a neutral blazer. She is standing against a minimalist light-colored wall with soft natural light streaming in. The image has a clean, high-contrast corporate feel, utilizing a sophisticated color palette of white, beige, and subtle yellow accents to align with an enterprise UI design." src="https://lh3.googleusercontent.com/aida-public/AB6AXuClCo9sSrqjDh1_ZfkjdEeWVEFCzv9xxNIaU6ge9389REF6X-VABI4HbtN1X18cvpGQn7zyFsXR5x_MiSa2H9slaEhdOtIdgwLe8HRYpHyuQovtppD4kuF9rx0Or0kP2QBFYoOeQ8Rvzc3J8_90f-WC0R23FMUh0Z2RLkkRPjkBKgoDqVDtozVpf584HkjF1h0NPklgtvMgPrrhrkqfSTOYViEPHfsJrjDp34i09ztA5QUuYSS8eDCx5AME0jHTqMZx7nRr7xc1zkg"/>
+<span class="font-body-md text-on-surface">Sarah Rivera</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-on-surface-variant">Operations</td>
+<td class="px-lg py-md font-body-md text-on-surface-variant">Nov 05, 2023</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-green-100 text-green-700 font-label-md text-[10px] uppercase">Active</span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-error"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="staff-table-row transition-colors group">
+<td class="px-lg py-md font-body-md text-on-surface font-semibold">#BA-9023</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<img alt="Staff Portrait" class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20" data-alt="A portrait of a male executive in a sleek modern office environment. He is leaning slightly against a glass wall with digital data overlays visible in the background reflection. The lighting is crisp and cool with warm yellow highlights hitting the side of his face. The visual style is premium and authoritative, emphasizing the technological aspect of a biometrics firm." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDppJ9uSzsVM8DD-lxnEHzfmVRIhEL_gcgh6RSWZgActpwTpxIb5jpomVQX2eovh5XPVu24luCxFIHr_MIQvmv6qBMMn63Ic8XWtqI3OHfNNh-t8QFd3FgNV_Smo8OZfZmwOY8uDvTV2UKbDHzvmFcPmD39NWLW71L_ITswixW2-Tjt9uEqpKVRBQvDqPsXBgf_xqP_zaiqdMHZguCKHibWO-RKzeUsSDu2z59HHYSchQko6JJh9y2odVLcnco5NA99xXe18EOqlYE"/>
+<span class="font-body-md text-on-surface">James Kuan</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-on-surface-variant">Finance</td>
+<td class="px-lg py-md font-body-md text-on-surface-variant">Dec 01, 2023</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-red-100 text-red-700 font-label-md text-[10px] uppercase">Inactive</span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-error"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="staff-table-row transition-colors group">
+<td class="px-lg py-md font-body-md text-on-surface font-semibold">#BA-9024</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<img alt="Staff Portrait" class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20" data-alt="A clean and minimal profile photo of a young professional with short dark hair. The subject is centered in the frame with a solid neutral light gray background that makes the image pop. The lighting is soft and even, creating a friendly yet disciplined appearance. The aesthetic is modern and fits perfectly within a structured, data-heavy HR enterprise dashboard." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCww5CF83nqkKbcZh1b5eZngByiUwr0X1XIRN5XMnZPiinaogPpAuBTNzlo43K3nQ6Cl6QKuvQ2lkFgZexRNzLSiTceh7MVDh0Frqh15T0jmmC9AhqJXdVbGqdkuGIuAvzYgyl6SVb1oIJF2QvL198GvhU-SErjGHRaCv-pBADZqw3QCyoQFPJLxS4FMKD0f7JEum5tUjcZVzH3fyzBV1xeGzRtlOziB9UO1CIu2L-C5klP_wAHyKEgWDWHZG7_-OgCsQ00d74w3Lg"/>
+<span class="font-body-md text-on-surface">Maya Lopez</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-on-surface-variant">Legal</td>
+<td class="px-lg py-md font-body-md text-on-surface-variant">Jan 14, 2024</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-green-100 text-green-700 font-label-md text-[10px] uppercase">Active</span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-error"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+<!-- Row 5 -->
+<tr class="staff-table-row transition-colors group">
+<td class="px-lg py-md font-body-md text-on-surface font-semibold">#BA-9025</td>
+<td class="px-lg py-md">
+<div class="flex items-center gap-md">
+<img alt="Staff Portrait" class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20" data-alt="A high-end professional avatar of a senior male employee in a formal button-down shirt. The shot is captured in a minimalist workspace with sleek architectural lines and soft morning sunlight. The palette is dominated by clean whites and muted yellow tones, ensuring a cohesive look with a yellow-accented enterprise design system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAAUzlSFKUHIg6SNNuxpKanB2KUfGEK8yqvWLygwKHa4843d2UKBSVihyH0byjTKmRSXIOd9rPfPBNDrpD7LhmctXn5uvlid0tqeENIfAdSXAMmN2VizFU7Tw34UZzxkLMNJpxeFV1RrJu47b9pWzrSiwE5ouH0tz6VlHiezDy8ihfjYf6KYBdsH8PJrNnl4JPtd1Uv3kgngJ0dz9_Ul6Hx60R-uzdfaVuR21Fj5ZWWeBsNOf3OhChia77NH3E_i9asItgOgsibd9k"/>
+<span class="font-body-md text-on-surface">Thomas Chen</span>
+</div>
+</td>
+<td class="px-lg py-md font-body-md text-on-surface-variant">Human Resources</td>
+<td class="px-lg py-md font-body-md text-on-surface-variant">Feb 20, 2024</td>
+<td class="px-lg py-md">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-green-100 text-green-700 font-label-md text-[10px] uppercase">Active</span>
+</td>
+<td class="px-lg py-md text-right">
+<div class="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">visibility</span></button>
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary"><span class="material-symbols-outlined text-[20px]">edit</span></button>
+<button class="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-error"><span class="material-symbols-outlined text-[20px]">delete</span></button>
+</div>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="bg-surface border-t border-outline-variant px-lg py-md flex items-center justify-between">
+<p class="font-label-md text-label-md text-on-surface-variant">Showing 1 to 5 of 24 results</p>
+<div class="flex items-center gap-xs">
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40" disabled="">
+<span class="material-symbols-outlined text-[18px]">chevron_left</span>
+</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-container text-on-primary-container font-body-md font-bold">1</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors font-body-md">2</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors font-body-md">3</button>
+<span class="px-xs text-on-surface-variant">...</span>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors font-body-md">5</button>
+<button class="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors">
+<span class="material-symbols-outlined text-[18px]">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Quick Stats / Bento Grid Supplement -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-lg pt-md">
+<div class="bg-surface border border-outline-variant rounded-xl p-lg shadow-sm">
+<div class="flex items-center justify-between mb-md">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase">Biometric Coverage</h4>
+<span class="material-symbols-outlined text-primary">analytics</span>
+</div>
+<p class="font-display text-display text-on-surface">94%</p>
+<div class="w-full bg-surface-container rounded-full h-2 mt-sm overflow-hidden">
+<div class="bg-primary h-full rounded-full" style="width: 94%"></div>
+</div>
+<p class="text-[11px] text-on-surface-variant mt-md flex items-center gap-xs">
+<span class="material-symbols-outlined text-[14px] text-green-600">trending_up</span>
+<span class="text-green-600 font-bold">+2.4%</span> since last month
+          </p>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-lg shadow-sm">
+<div class="flex items-center justify-between mb-md">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase">Pending Enrollments</h4>
+<span class="material-symbols-outlined text-primary">person_pin</span>
+</div>
+<p class="font-display text-display text-on-surface">12</p>
+<div class="flex items-center gap-xs mt-md">
+<div class="flex -space-x-2">
+<img alt="user" class="w-6 h-6 rounded-full border-2 border-surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDtDTv7wjmidQ-CvUJ80aSo4l2XTZukre9GcdozpfLIakkIh8APVkDtnGvYafnCpsupJ-ORmsW7HdkdlgJnP_UuySokDOahOI79vmuzjFihpIiQVyGcWMPc1X5WnsZyxwkl4sHnbBDGJRQWCL3UG_tSP7k5plAJi1PdAl8DTc5CxrFie1pe-KWzMMkYBqsIyrC-v6ihMyJffOtOiMecZfBpInAMasqkXz4NmUqCgT2CeRxKq6EgBSqC4aLtqEf3g9sDIHnZBYNIjx8"/>
+<img alt="user" class="w-6 h-6 rounded-full border-2 border-surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9-KSicBGu0X2Mh0e8BIm-snA7H_oGvzs8KmoHMD6MYHEDewBswiHrflclsgEbr3MBI_9Xgdytn7k8YDameJESohiGXwo2Mp8aMNvUvy_e06pAhvCgttmXFJ8_v7KTdxFwmflDhnae1-CMX7MGqL-4uZBFg9qpUxLoF-1FGVU1GCIiqKFA8f95bz_M4gnjnAifUZF9VlmpUb5GrzsSlwbVprPy9uoKp1kdKUfdv2UkRPfME83B5FrOeBg44Na0hVvdqlES0d7oAoM"/>
+<img alt="user" class="w-6 h-6 rounded-full border-2 border-surface" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDi255_bAItTQmQSG3jy9P04U2U1LW69L1QtWUFJg16cKiNXdqMejbrQRijENd0ThndXZNh-6Xl2RqvsN_bfI-poVTdyK0-jlgWRAI9OiJvmHtNMLY_TE-mecPlOVBdsRmqeiQMHsRChWjogjnwE4qqS2zjMc7B_AFQlsKMjuW2eAKP6boyXwTLPNgfe9pySrZ_ZOZvdBr4QRrr4AgtIogij0f8se-RuSf7JeSl9e0VtJ0Fj7ftenbp0RGsfmutYyZG5gh1xoaIZys"/>
+<div class="w-6 h-6 rounded-full bg-surface-container border-2 border-surface flex items-center justify-center text-[10px] font-bold text-on-surface-variant">+9</div>
+</div>
+<p class="text-[11px] text-on-surface-variant ml-xs">New hires awaiting face ID mapping</p>
+</div>
+</div>
+<div class="bg-surface border border-outline-variant rounded-xl p-lg shadow-sm">
+<div class="flex items-center justify-between mb-md">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase">System Health</h4>
+<span class="material-symbols-outlined text-primary">security</span>
+</div>
+<div class="flex items-end justify-between">
+<div>
+<p class="font-display text-display text-on-surface">Stable</p>
+<p class="text-[11px] text-on-surface-variant mt-sm">Last sync: 2 mins ago</p>
+</div>
+<div class="flex gap-1 items-end h-10">
+<div class="w-1 bg-primary h-4 rounded-full"></div>
+<div class="w-1 bg-primary h-6 rounded-full"></div>
+<div class="w-1 bg-primary h-5 rounded-full"></div>
+<div class="w-1 bg-primary h-8 rounded-full"></div>
+<div class="w-1 bg-primary h-10 rounded-full"></div>
+<div class="w-1 bg-primary h-7 rounded-full"></div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Footer Space -->
+<footer class="mt-auto py-lg px-lg border-t border-outline-variant">
+<div class="flex flex-col md:flex-row justify-between items-center gap-md">
+<p class="text-label-md text-on-surface-variant">© 2024 Bio Attendance Enterprise. All security protocols active.</p>
+<div class="flex items-center gap-lg">
+<a class="text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Privacy Policy</a>
+<a class="text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Terms of Service</a>
+<a class="text-label-md text-on-surface-variant hover:text-primary transition-colors" href="#">Support</a>
+</div>
+</div>
+</footer>
+</main>
+<!-- Interactive JavaScript for micro-interactions -->
+<script>
+    // Ripple effect for primary button
+    document.querySelector('.bg-primary-container').addEventListener('click', function(e) {
+      let ripple = document.createElement('span');
+      ripple.classList.add('absolute', 'bg-white/30', 'rounded-full', 'animate-ping');
+      ripple.style.width = '100px';
+      ripple.style.height = '100px';
+      ripple.style.left = (e.clientX - e.target.getBoundingClientRect().left - 50) + 'px';
+      ripple.style.top = (e.clientY - e.target.getBoundingClientRect().top - 50) + 'px';
+      this.appendChild(ripple);
+      setTimeout(() => ripple.remove(), 600);
+    });
+
+    // Simple search interaction highlight
+    const searchInputs = document.querySelectorAll('input[type="text"]');
+    searchInputs.forEach(input => {
+      input.addEventListener('focus', () => {
+        input.parentElement.classList.add('ring-2', 'ring-primary-container');
+      });
+      input.addEventListener('blur', () => {
+        input.parentElement.classList.remove('ring-2', 'ring-primary-container');
+      });
+    });
+  </script>
+</body></html>

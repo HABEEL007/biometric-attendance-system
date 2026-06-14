@@ -1,0 +1,143 @@
+@import "tailwindcss";
+
+@theme {
+  --color-surface-container-lowest: #ffffff;
+  --color-on-primary: #ffffff;
+  --color-on-primary-fixed-variant: #5b4300;
+  --color-on-primary-fixed: #261a00;
+  --color-tertiary-container: #c1cbde;
+  --color-surface-container-high: #e7e8e9;
+  --color-primary-fixed-dim: #fabd00;
+  --color-primary-container: #ffc107;
+  --color-surface-variant: #e1e3e4;
+  --color-secondary-container: #fcd400;
+  --color-surface-tint: #785900;
+  --color-outline: #827660;
+  --color-outline-variant: #d4c5ab;
+  --color-tertiary-fixed-dim: #bdc7d9;
+  --color-primary: #785900;
+  --color-on-tertiary-fixed-variant: #3d4756;
+  --color-on-tertiary: #ffffff;
+  --color-on-secondary-container: #6e5c00;
+  --color-background: #f8f9fa;
+  --color-on-error: #ffffff;
+  --color-error: #ba1a1a;
+  --color-on-tertiary-container: #4c5665;
+  --color-on-secondary-fixed: #221b00;
+  --color-on-surface-variant: #4f4632;
+  --color-on-error-container: #93000a;
+  --color-inverse-primary: #fabd00;
+  --color-tertiary-fixed: #d9e3f6;
+  --color-surface-container-low: #f3f4f5;
+  --color-surface: #f8f9fa;
+  --color-surface-bright: #f8f9fa;
+  --color-inverse-on-surface: #f0f1f2;
+  --color-surface-container-highest: #e1e3e4;
+  --color-surface-container: #edeeef;
+  --color-on-tertiary-fixed: #121c2a;
+  --color-primary-fixed: #ffdf9e;
+  --color-on-surface: #191c1d;
+  --color-secondary: #705d00;
+  --color-inverse-surface: #2e3132;
+  --color-surface-dim: #d9dadb;
+  --color-secondary-fixed-dim: #e9c400;
+  --color-on-secondary-fixed-variant: #544600;
+  --color-on-primary-container: #6d5100;
+  --color-error-container: #ffdad6;
+  --color-tertiary: #555f6f;
+  --color-on-background: #191c1d;
+  --color-secondary-fixed: #ffe16d;
+  --color-on-secondary: #ffffff;
+
+  --spacing-base: 4px;
+  --spacing-xs: 4px;
+  --spacing-sm: 8px;
+  --spacing-md: 16px;
+  --spacing-lg: 24px;
+  --spacing-xl: 32px;
+  --spacing-margin: 24px;
+  --spacing-gutter: 20px;
+  --spacing-container-max: 1440px;
+
+  --font-body-lg: "Inter", sans-serif;
+  --font-body-md: "Inter", sans-serif;
+  --font-headline-lg: "Inter", sans-serif;
+  --font-headline-lg-mobile: "Inter", sans-serif;
+  --font-headline-md: "Inter", sans-serif;
+  --font-headline-sm: "Inter", sans-serif;
+  --font-label-md: "Inter", sans-serif;
+  --font-label-sm: "Inter", sans-serif;
+}
+
+@layer base {
+  body {
+    @apply text-on-background font-body-md;
+    background: var(--color-background);
+    min-height: 100vh;
+  }
+
+  .dark {
+    --color-surface-container-lowest: #0f1113;
+    --color-surface-container-high: #2b2e30;
+    --color-surface-variant: #4a4d50;
+    --color-background: #191c1d;
+    --color-surface-container-low: #1d2022;
+    --color-surface: #191c1d;
+    --color-surface-bright: #383b3d;
+    --color-inverse-on-surface: #191c1d;
+    --color-surface-container-highest: #333638;
+    --color-surface-container: #212426;
+    --color-surface-dim: #111415;
+
+    --color-on-surface: #e1e3e4;
+    --color-on-background: #e1e3e4;
+    --color-on-surface-variant: #c4c6c7;
+    --color-inverse-surface: #f8f9fa;
+
+    --color-primary-container: #5b4300;
+    --color-on-primary-container: #ffdf9e;
+    
+    --color-error-container: #93000a;
+    --color-on-error-container: #ffdad6;
+    
+    --color-outline: #737373;
+    --color-outline-variant: #404040;
+  }
+}
+
+@layer utilities {
+  .material-symbols-outlined {
+    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    vertical-align: middle;
+  }
+  .scanner-line {
+    animation: scan 3s ease-in-out infinite;
+  }
+  @keyframes scan {
+    0%, 100% { top: 0%; opacity: 0; }
+    50% { top: 100%; opacity: 1; }
+  }
+  .bounding-box {
+    border: 2px solid #ffb4ab;
+    box-shadow: 0 0 10px rgba(255, 180, 171, 0.5);
+  }
+  .bounding-box-iris {
+    border: 2px solid #7bd0ff;
+    box-shadow: 0 0 10px rgba(123, 208, 255, 0.5);
+  }
+
+  .loading-dots:after {
+    content: '.';
+    animation: dots 1.5s steps(5, end) infinite;
+  }
+  @keyframes dots {
+    0%, 20% { content: '.'; }
+    40% { content: '..'; }
+    60% { content: '...'; }
+    80%, 100% { content: ''; }
+  }
+  .pattern-bg {
+    background-image: radial-gradient(circle at 2px 2px, rgba(0,0,0,0.05) 1px, transparent 0);
+    background-size: 40px 40px;
+  }
+}

@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Audit Logs | Bio Attendance</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#785900",
+                    "on-tertiary-fixed": "#121c2a",
+                    "surface-dim": "#d9dadb",
+                    "on-primary": "#ffffff",
+                    "on-secondary-container": "#6e5c00",
+                    "on-tertiary": "#ffffff",
+                    "secondary": "#705d00",
+                    "surface-container-highest": "#e1e3e4",
+                    "inverse-surface": "#2e3132",
+                    "surface-container-high": "#e7e8e9",
+                    "on-error-container": "#93000a",
+                    "primary-fixed-dim": "#fabd00",
+                    "on-tertiary-container": "#4c5665",
+                    "surface": "#f8f9fa",
+                    "on-secondary-fixed-variant": "#544600",
+                    "error": "#ba1a1a",
+                    "surface-container-low": "#f3f4f5",
+                    "on-tertiary-fixed-variant": "#3d4756",
+                    "on-primary-fixed-variant": "#5b4300",
+                    "tertiary": "#555f6f",
+                    "on-surface-variant": "#4f4632",
+                    "on-secondary": "#ffffff",
+                    "primary-fixed": "#ffdf9e",
+                    "secondary-fixed": "#ffe16d",
+                    "background": "#f8f9fa",
+                    "error-container": "#ffdad6",
+                    "surface-container-lowest": "#ffffff",
+                    "primary-container": "#ffc107",
+                    "on-secondary-fixed": "#221b00",
+                    "on-surface": "#191c1d",
+                    "tertiary-fixed-dim": "#bdc7d9",
+                    "inverse-on-surface": "#f0f1f2",
+                    "surface-container": "#edeeef",
+                    "surface-variant": "#e1e3e4",
+                    "secondary-container": "#fcd400",
+                    "on-error": "#ffffff",
+                    "on-primary-fixed": "#261a00",
+                    "primary": "#785900",
+                    "outline-variant": "#d4c5ab",
+                    "tertiary-container": "#c1cbde",
+                    "tertiary-fixed": "#d9e3f6",
+                    "surface-bright": "#f8f9fa",
+                    "secondary-fixed-dim": "#e9c400",
+                    "inverse-primary": "#fabd00",
+                    "on-primary-container": "#6d5100",
+                    "outline": "#827660",
+                    "on-background": "#191c1d"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "spacing": {
+                    "xs": "4px",
+                    "md": "16px",
+                    "sm": "8px",
+                    "lg": "24px",
+                    "base": "4px",
+                    "margin": "24px",
+                    "container-max": "1440px",
+                    "gutter": "20px",
+                    "xl": "32px"
+            },
+            "fontFamily": {
+                    "label-md": ["Inter"],
+                    "headline-lg": ["Inter"],
+                    "headline-lg-mobile": ["Inter"],
+                    "body-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "headline-sm": ["Inter"]
+            },
+            "fontSize": {
+                    "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.05em", "fontWeight": "600"}],
+                    "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                    "headline-lg-mobile": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                    "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+                    "label-sm": ["11px", {"lineHeight": "14px", "fontWeight": "500"}],
+                    "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+                    "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                    "headline-sm": ["20px", {"lineHeight": "28px", "fontWeight": "600"}]
+            }
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        background-color: #F8F9FA;
+      }
+      .custom-scrollbar::-webkit-scrollbar {
+        width: 6px;
+      }
+      .custom-scrollbar::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      .custom-scrollbar::-webkit-scrollbar-thumb {
+        background: #E5E7EB;
+        border-radius: 10px;
+      }
+      .log-row:nth-child(even) {
+        background-color: #F8F9FA;
+      }
+    </style>
+</head>
+<body class="font-body-md text-on-surface">
+<!-- SideNavBar Anchor -->
+<aside class="fixed left-0 top-0 h-full w-[280px] bg-surface-container-lowest border-r border-outline-variant flex flex-col py-lg z-50">
+<div class="px-lg mb-xl">
+<div class="flex items-center gap-sm">
+<span class="material-symbols-outlined text-primary text-headline-sm" style="font-variation-settings: 'FILL' 1;">fingerprint</span>
+<div>
+<h1 class="font-headline-sm text-headline-sm font-bold text-on-surface">Bio Attendance</h1>
+<p class="text-label-sm text-on-surface-variant">AI Biometric System</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<!-- Navigation Items -->
+<a class="flex items-center px-lg py-md text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined mr-md">dashboard</span>
+<span class="font-body-md">Dashboard</span>
+</a>
+<a class="flex items-center px-lg py-md text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined mr-md">videocam</span>
+<span class="font-body-md">Live Monitor</span>
+</a>
+<a class="flex items-center px-lg py-md text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined mr-md">person_add</span>
+<span class="font-body-md">Enrollment</span>
+</a>
+<a class="flex items-center px-lg py-md text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined mr-md">group</span>
+<span class="font-body-md">Staff</span>
+</a>
+<a class="flex items-center px-lg py-md text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined mr-md">history</span>
+<span class="font-body-md">Records</span>
+</a>
+<!-- Active State: Audit Logs -->
+<a class="flex items-center px-lg py-md border-l-4 border-primary bg-secondary-container text-on-secondary-container font-semibold cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined mr-md">analytics</span>
+<span class="font-body-md">Audit Logs</span>
+</a>
+<a class="flex items-center px-lg py-md text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:scale-95" href="#">
+<span class="material-symbols-outlined mr-md">settings</span>
+<span class="font-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto px-lg">
+<button class="flex items-center w-full px-lg py-md text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer active:scale-95 rounded-lg">
+<span class="material-symbols-outlined mr-md">logout</span>
+<span class="font-body-md">Logout</span>
+</button>
+</div>
+</aside>
+<!-- TopAppBar Anchor -->
+<header class="flex justify-between items-center px-lg py-md ml-[280px] w-[calc(100%-280px)] bg-surface shadow-sm sticky top-0 z-40">
+<h2 class="font-headline-md text-headline-md font-bold text-primary">Audit Logs</h2>
+<div class="flex items-center gap-lg">
+<button class="relative p-sm text-on-surface-variant hover:text-primary transition-colors scale-100 active:scale-98">
+<span class="material-symbols-outlined">notifications</span>
+<span class="absolute top-1 right-1 w-2 h-2 bg-error rounded-full"></span>
+</button>
+<div class="flex items-center gap-sm cursor-pointer hover:opacity-80 transition-opacity">
+<div class="text-right">
+<p class="font-label-md text-on-surface">Admin System</p>
+<p class="text-label-sm text-on-surface-variant">Security Lead</p>
+</div>
+<img alt="Admin Portrait" class="w-10 h-10 rounded-full border-2 border-outline-variant object-cover" data-alt="A professional close-up portrait of a corporate security administrator in a minimalist office setting. The individual is wearing a dark, well-tailored blazer, reflecting a modern corporate aesthetic. The lighting is soft and even, highlighting clear skin and a focused expression. The background is a clean, off-white workspace with subtle high-tech accents, maintaining the professional minimalism of the Bio Attendance system." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAvklDZHlNjtQCsF_fq3vRdgDzDJ6yXSDt8I8gm1cg4rrNTep6qM6vmUHBiwWCx8gueDFizmYK6EVof8W8tj8fR5eUHaCS0vykn7DQ5KtGy-IHLyk8ZerS3aQA3sxR2sVgM54iG7uYkgYmd1kiqt2dsrKxNnlPq9AwnRZ9EqSkCTgAWSmwOgOp2iYAy_DRJkYMe3IaRtUZTXD5NA_ETTBgR1VU4FmfjBuSdJefhUU7_ZmQ20IxyIcq7ymatvT4ABq2UtV-aQKMYnG0"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-[280px] p-lg">
+<div class="max-w-container-max mx-auto">
+<!-- Filter Section -->
+<section class="bg-surface-container-lowest rounded-xl p-md mb-lg shadow-sm border border-outline-variant flex flex-wrap items-end gap-md">
+<div class="flex-1 min-w-[200px]">
+<label class="block text-label-sm text-on-surface-variant mb-xs ml-1">Date Range</label>
+<div class="relative">
+<input class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm focus:ring-2 focus:ring-primary-container focus:border-primary outline-none transition-all" type="date"/>
+</div>
+</div>
+<div class="flex-1 min-w-[200px]">
+<label class="block text-label-sm text-on-surface-variant mb-xs ml-1">Event Type</label>
+<select class="w-full bg-surface border border-outline-variant rounded-lg px-md py-sm focus:ring-2 focus:ring-primary-container focus:border-primary outline-none appearance-none transition-all">
+<option value="all">All Events</option>
+<option value="success">Success</option>
+<option value="spoof">Spoof Attempt</option>
+<option value="error">System Error</option>
+</select>
+</div>
+<div class="flex-1 min-w-[200px]">
+<label class="block text-label-sm text-on-surface-variant mb-xs ml-1">Search User</label>
+<div class="relative">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[18px]">search</span>
+<input class="w-full bg-surface border border-outline-variant rounded-lg pl-10 pr-md py-sm focus:ring-2 focus:ring-primary-container focus:border-primary outline-none transition-all" placeholder="Name or ID..." type="text"/>
+</div>
+</div>
+<button class="px-lg py-[10px] bg-surface-container-high text-on-surface font-semibold rounded-lg hover:bg-surface-variant transition-colors flex items-center gap-sm active:scale-95">
+<span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+<span>Clear Filters</span>
+</button>
+</section>
+<!-- Logs Table Container -->
+<div class="bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden">
+<div class="overflow-x-auto">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="border-b border-outline-variant bg-surface-container-low">
+<th class="px-lg py-md font-label-md text-on-surface-variant uppercase tracking-wider">Timestamp</th>
+<th class="px-lg py-md font-label-md text-on-surface-variant uppercase tracking-wider">Event Type</th>
+<th class="px-lg py-md font-label-md text-on-surface-variant uppercase tracking-wider">Description</th>
+<th class="px-lg py-md font-label-md text-on-surface-variant uppercase tracking-wider">User / ID</th>
+<th class="px-lg py-md font-label-md text-on-surface-variant uppercase tracking-wider">Visual Evidence</th>
+<th class="px-lg py-md font-label-md text-on-surface-variant uppercase tracking-wider">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant">
+<!-- Log Item: Spoof Attempt -->
+<tr class="log-row hover:bg-surface-container-high transition-colors">
+<td class="px-lg py-lg whitespace-nowrap">
+<div class="font-body-md text-on-surface">Oct 24, 2023</div>
+<div class="text-label-sm text-on-surface-variant">14:22:05.122</div>
+</td>
+<td class="px-lg py-lg">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-error-container text-on-error-container text-label-sm font-bold border border-error/20">
+<span class="material-symbols-outlined text-[14px] mr-xs" style="font-variation-settings: 'FILL' 1;">security</span>
+                                        Spoof Attempt
+                                    </span>
+</td>
+<td class="px-lg py-lg max-w-xs">
+<p class="font-body-md text-on-surface leading-tight">Presentation attack detected. Static image pattern recognized instead of live tissue.</p>
+</td>
+<td class="px-lg py-lg">
+<div class="font-body-md text-on-surface font-semibold">Unknown</div>
+<div class="text-label-sm text-on-surface-variant">ID: UNKN-9021</div>
+</td>
+<td class="px-lg py-lg">
+<div class="relative group cursor-pointer">
+<img alt="Spoof Evidence" class="w-16 h-12 object-cover rounded-lg border-2 border-error/30 group-hover:scale-110 transition-transform shadow-sm" data-alt="A gritty, high-contrast monochrome snapshot from a security camera perspective. The image shows a close-up of a human hand holding a high-resolution photograph of a face up to a biometric scanner. The lighting is clinical and harsh, highlighting the flat texture of the photograph compared to real skin. Red digital overlay indicators highlight the detected spoofing pattern." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJkLQR40dEKYUH6nJlr4NMdLnUxuLZnmrxUQBSJIKdmakj4zlLBR5I7CWk-o0qZHlVRZ7jVAOl5z8B4-3DQ9op99GZx3UZO3UpHYTzaCC2TTXn7KiqXPdT37V7HoFhJV1xmthrwGy9rjL6Bu8xhRb7geup_7-SgdtspN9RAuW8VIIiOIa0afRLFCDnzS0c1MQWIJpE9mmXnRxWV7WPIPwLSD5lC5g8vzcO4ULi5KdpVdw1OL6iSopA_qdZQFKpU5-FOrZ34iImVHw"/>
+<div class="absolute inset-0 bg-error/10 rounded-lg group-hover:bg-transparent transition-colors"></div>
+</div>
+</td>
+<td class="px-lg py-lg text-right">
+<button class="p-sm hover:bg-surface-variant rounded-full text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Log Item: Success -->
+<tr class="log-row hover:bg-surface-container-high transition-colors">
+<td class="px-lg py-lg whitespace-nowrap">
+<div class="font-body-md text-on-surface">Oct 24, 2023</div>
+<div class="text-label-sm text-on-surface-variant">14:15:33.440</div>
+</td>
+<td class="px-lg py-lg">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-primary-container text-on-primary-container text-label-sm font-bold border border-primary/20">
+<span class="material-symbols-outlined text-[14px] mr-xs" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+                                        Success
+                                    </span>
+</td>
+<td class="px-lg py-lg max-w-xs">
+<p class="font-body-md text-on-surface leading-tight">Authentication successful. 3D liveness check passed with 99.8% confidence.</p>
+</td>
+<td class="px-lg py-lg">
+<div class="flex items-center gap-sm">
+<div class="w-8 h-8 rounded-full bg-tertiary-container flex items-center justify-center text-on-tertiary-container font-bold text-label-sm">JS</div>
+<div>
+<div class="font-body-md text-on-surface font-semibold">James Sterling</div>
+<div class="text-label-sm text-on-surface-variant">ID: EMP-4402</div>
+</div>
+</div>
+</td>
+<td class="px-lg py-lg">
+<span class="text-label-sm text-on-surface-variant italic">No snapshot captured</span>
+</td>
+<td class="px-lg py-lg text-right">
+<button class="p-sm hover:bg-surface-variant rounded-full text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Log Item: Error -->
+<tr class="log-row hover:bg-surface-container-high transition-colors">
+<td class="px-lg py-lg whitespace-nowrap">
+<div class="font-body-md text-on-surface">Oct 24, 2023</div>
+<div class="text-label-sm text-on-surface-variant">14:10:01.005</div>
+</td>
+<td class="px-lg py-lg">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-bold border border-outline-variant">
+<span class="material-symbols-outlined text-[14px] mr-xs">warning</span>
+                                        System Error
+                                    </span>
+</td>
+<td class="px-lg py-lg max-w-xs">
+<p class="font-body-md text-on-surface leading-tight">Network latency exceeded threshold (500ms). Sync delayed for terminal #B12.</p>
+</td>
+<td class="px-lg py-lg">
+<div class="font-body-md text-on-surface font-semibold">System Core</div>
+<div class="text-label-sm text-on-surface-variant">Node: MAIN-SRV</div>
+</td>
+<td class="px-lg py-lg">
+<span class="text-label-sm text-on-surface-variant italic">N/A</span>
+</td>
+<td class="px-lg py-lg text-right">
+<button class="p-sm hover:bg-surface-variant rounded-full text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+<!-- Log Item: Spoof Attempt 2 -->
+<tr class="log-row hover:bg-surface-container-high transition-colors">
+<td class="px-lg py-lg whitespace-nowrap">
+<div class="font-body-md text-on-surface">Oct 24, 2023</div>
+<div class="text-label-sm text-on-surface-variant">13:45:12.882</div>
+</td>
+<td class="px-lg py-lg">
+<span class="inline-flex items-center px-sm py-xs rounded-full bg-error-container text-on-error-container text-label-sm font-bold border border-error/20">
+<span class="material-symbols-outlined text-[14px] mr-xs" style="font-variation-settings: 'FILL' 1;">security</span>
+                                        Spoof Attempt
+                                    </span>
+</td>
+<td class="px-lg py-lg max-w-xs">
+<p class="font-body-md text-on-surface leading-tight">Digital mask replay detected on Mobile Terminal App. Frame mismatch.</p>
+</td>
+<td class="px-lg py-lg">
+<div class="font-body-md text-on-surface font-semibold">Unknown</div>
+<div class="text-label-sm text-on-surface-variant">Device: IPH-12-G</div>
+</td>
+<td class="px-lg py-lg">
+<div class="relative group cursor-pointer">
+<img alt="Spoof Evidence" class="w-16 h-12 object-cover rounded-lg border-2 border-error/30 group-hover:scale-110 transition-transform shadow-sm" data-alt="A low-angle digital security capture showing a person's face being obscured by a realistic silicone mask designed to mimic another individual. The lighting is dim and bluish, typical of a mobile screen's glow. Visual artifacts from the AI biometric system highlight the unnatural heat signature and skin texture discrepancies, captured in a clinical, documentary style for a security audit." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBxiqeYY9JoNnEyp3c3kccfKadfht0W0v3kynw1U3943cvv1vO7VDhPwmMa779ClJ3sol9Yz0B1EOgVepbI7PM4lu4-670jU7lQ4I-KyeubkqXtiX9JSbPyzdPeEDX_NWSLub5nB64btH0E5a_t0NjJWZ4FcsAwvY6lw5rokgBDbn0bDFGOdagYFu-MpXdVPrRQyiFasj46NyxftcoYh0RXQmYuPg-CBZl-1755y_oK685neqYsQ4_UmNYSe-UqdEkfnS6Je2DHVvg"/>
+<div class="absolute inset-0 bg-error/10 rounded-lg group-hover:bg-transparent transition-colors"></div>
+</div>
+</td>
+<td class="px-lg py-lg text-right">
+<button class="p-sm hover:bg-surface-variant rounded-full text-on-surface-variant">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Pagination -->
+<div class="px-lg py-md bg-surface-container-low flex justify-between items-center border-t border-outline-variant">
+<p class="text-label-sm text-on-surface-variant">Showing 1 to 4 of 1,240 events</p>
+<div class="flex gap-xs">
+<button class="p-xs bg-surface-container-lowest border border-outline-variant rounded hover:bg-surface-variant transition-colors disabled:opacity-50" disabled="">
+<span class="material-symbols-outlined">chevron_left</span>
+</button>
+<button class="px-sm py-xs bg-primary text-on-primary font-bold rounded text-label-sm">1</button>
+<button class="px-sm py-xs bg-surface-container-lowest border border-outline-variant rounded hover:bg-surface-variant transition-colors text-label-sm">2</button>
+<button class="px-sm py-xs bg-surface-container-lowest border border-outline-variant rounded hover:bg-surface-variant transition-colors text-label-sm">3</button>
+<button class="p-xs bg-surface-container-lowest border border-outline-variant rounded hover:bg-surface-variant transition-colors">
+<span class="material-symbols-outlined">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- FAB Suppression: No FAB for Audit Logs per instructions -->
+<script>
+        // Micro-interaction for table rows
+        document.querySelectorAll('.log-row').forEach(row => {
+            row.addEventListener('click', () => {
+                // Potential modal expansion for log details
+                console.log('Opening log detail view...');
+            });
+        });
+
+        // Hover effect on thumbnails
+        document.querySelectorAll('.group').forEach(thumb => {
+            thumb.addEventListener('mouseenter', () => {
+                thumb.style.zIndex = '10';
+            });
+            thumb.addEventListener('mouseleave', () => {
+                thumb.style.zIndex = '1';
+            });
+        });
+    </script>
+</body></html>

@@ -1,0 +1,12 @@
+--extra-index-url https://download.pytorch.org/whl/cu121
+torch
+torchvision
+timm
+albumentations
+scikit-learn
+opencv-python
+tqdm
+fastapi
+uvicorn
+numpy
+scipy
