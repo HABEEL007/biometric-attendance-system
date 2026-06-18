@@ -2,9 +2,11 @@ from fastapi import APIRouter, HTTPException
 from fastapi.responses import StreamingResponse
 import cv2
 import time
+import asyncio
 from app.api.schemas.models import CameraStartPayload
 from app.camera.camera_manager import CameraManager
 from app.pipeline.verification_pipeline import VerificationPipeline
+from app.pipeline.person_tracking_pipeline import SmartAttendancePipeline, draw_results
 from app.utils.logger import setup_logger
 
 router = APIRouter(prefix="/camera", tags=["Camera Controls"])
@@ -13,6 +15,7 @@ logger = setup_logger("camera_routes", "central.log")
 # Global reference to the active CameraManager
 camera_manager = None
 pipeline = VerificationPipeline()
+smart_pipeline = SmartAttendancePipeline(pipeline)
 latest_recognition = {"name": "Detecting...", "time": 0}
 
 @router.post("/start")
@@ -63,26 +66,25 @@ async def process_snapshot():
     # Update global recognition state for the live video stream overlay
     global latest_recognition
     if result.get("success"):
-        latest_recognition = {"name": result.get("name"), "time": time.time()}
+        latest_recognition = {"name": result.get("name"), "time": time.time(), "bbox": result.get("bbox")}
     elif result.get("status") == "REJECTED":
-        latest_recognition = {"name": "Unknown Face", "time": time.time()}
+        latest_recognition = {"name": "Unknown Face", "time": time.time(), "bbox": result.get("bbox")}
         
     return result
 
-def generate_frames():
-    global camera_manager
+async def generate_frames_async():
+    global camera_manager, smart_pipeline
     
     while camera_manager is not None and camera_manager.is_running:
         frame = camera_manager.get_latest_frame()
         if frame is not None:
             display_frame = frame.copy()
             
-            global latest_recognition
-            # Show recognition status if it's recent (within 5 seconds)
-            if time.time() - latest_recognition["time"] < 5.0:
-                label = latest_recognition["name"]
-                color = (0, 0, 255) if label == "Unknown Face" else (0, 255, 0)
-                cv2.putText(display_frame, f"Status: {label}", (20, 40), cv2.FONT_HERSHEY_SIMPLEX, 1, color, 3)
+            # Process through SmartAttendancePipeline
+            results = await smart_pipeline.process(display_frame)
+            
+            # Draw tracking results
+            display_frame = draw_results(display_frame, results)
                 
             # Compress to JPG (quality 70 for smoother streaming)
             ret, buffer = cv2.imencode('.jpg', display_frame, [int(cv2.IMWRITE_JPEG_QUALITY), 70])
@@ -91,12 +93,12 @@ def generate_frames():
                        b'Content-Type: image/jpeg\r\n\r\n' + buffer.tobytes() + b'\r\n')
         
         # Target ~30 FPS
-        time.sleep(0.033)
+        await asyncio.sleep(0.033)
 
 @router.get("/stream")
-def video_feed():
+async def video_feed():
     """Stream live MJPEG frames from the active camera."""
     global camera_manager
     if camera_manager is None or not camera_manager.is_running:
         raise HTTPException(status_code=400, detail="Camera is not active.")
-    return StreamingResponse(generate_frames(), media_type="multipart/x-mixed-replace; boundary=frame")
+    return StreamingResponse(generate_frames_async(), media_type="multipart/x-mixed-replace; boundary=frame")

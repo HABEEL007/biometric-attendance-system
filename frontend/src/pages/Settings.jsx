@@ -1,7 +1,47 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getSettings, updateSettings } from '../services/api';
 
 const Settings = () => {
   const [activeTab, setActiveTab] = useState('general');
+  const [settings, setSettings] = useState({
+    FACE_MATCH_THRESHOLD: 0.50,
+    IRIS_MATCH_THRESHOLD: 0.65,
+    LIVENESS_THRESHOLD: 0.70,
+    COOLDOWN_SECONDS: 10
+  });
+
+  useEffect(() => {
+    fetchSettings();
+  }, []);
+
+  const fetchSettings = async () => {
+    try {
+      const data = await getSettings();
+      setSettings(data);
+    } catch (err) {
+      console.error('Failed to fetch settings', err);
+    }
+  };
+
+  const handleChange = (key, value) => {
+    setSettings(prev => ({ ...prev, [key]: value }));
+  };
+
+  const handleSave = async () => {
+    try {
+      const payload = {
+        FACE_MATCH_THRESHOLD: parseFloat(settings.FACE_MATCH_THRESHOLD),
+        IRIS_MATCH_THRESHOLD: parseFloat(settings.IRIS_MATCH_THRESHOLD),
+        LIVENESS_THRESHOLD: parseFloat(settings.LIVENESS_THRESHOLD),
+        COOLDOWN_SECONDS: parseInt(settings.COOLDOWN_SECONDS)
+      };
+      await updateSettings(payload);
+      alert('Settings saved successfully!');
+    } catch (err) {
+      console.error('Failed to save settings', err);
+      alert('Failed to save settings.');
+    }
+  };
 
   return (
     <div className="p-xl max-w-container-max mx-auto w-full">
@@ -64,7 +104,12 @@ const Settings = () => {
                 <div className="space-y-md">
                   <div>
                     <label className="block font-label-md text-label-md text-on-surface-variant mb-xs">Recognition Cooldown (Seconds)</label>
-                    <input className="w-full bg-white border border-outline-variant rounded-lg px-md py-sm focus:outline-none focus:ring-2 focus:ring-primary-container" type="number" defaultValue="10" />
+                    <input 
+                      className="w-full bg-white border border-outline-variant rounded-lg px-md py-sm focus:outline-none focus:ring-2 focus:ring-primary-container" 
+                      type="number" 
+                      value={settings.COOLDOWN_SECONDS || ''} 
+                      onChange={(e) => handleChange('COOLDOWN_SECONDS', e.target.value)}
+                    />
                   </div>
                   <div className="grid grid-cols-2 gap-md">
                     <div>
@@ -80,7 +125,7 @@ const Settings = () => {
               </div>
             </div>
             <div className="flex justify-end">
-              <button className="bg-primary-container text-on-primary-container font-semibold px-xl py-md rounded-lg shadow-sm hover:brightness-95 transition-all flex items-center gap-md active:scale-98">
+              <button onClick={handleSave} className="bg-primary-container text-on-primary-container font-semibold px-xl py-md rounded-lg shadow-sm hover:brightness-95 transition-all flex items-center gap-md active:scale-98">
                 <span className="material-symbols-outlined">save</span> Save General Settings
               </button>
             </div>
@@ -96,30 +141,45 @@ const Settings = () => {
                 <div>
                   <div className="flex justify-between mb-md">
                     <label className="font-body-lg text-body-lg">Face Match Threshold</label>
-                    <span className="text-primary font-bold">0.85</span>
+                    <span className="text-primary font-bold">{settings.FACE_MATCH_THRESHOLD}</span>
                   </div>
-                  <input className="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer" max="0.9" min="0.1" step="0.01" type="range" defaultValue="0.85" />
+                  <input 
+                    className="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer" 
+                    max="0.9" min="0.1" step="0.01" type="range" 
+                    value={settings.FACE_MATCH_THRESHOLD || 0} 
+                    onChange={(e) => handleChange('FACE_MATCH_THRESHOLD', e.target.value)}
+                  />
                   <p className="text-xs text-on-surface-variant mt-sm">Higher values reduce false positives but may increase rejection rates.</p>
                 </div>
                 <div className="border-t border-outline-variant pt-lg">
                   <div className="flex justify-between mb-md">
                     <label className="font-body-lg text-body-lg">Iris Scan Threshold</label>
-                    <span className="text-primary font-bold">0.92</span>
+                    <span className="text-primary font-bold">{settings.IRIS_MATCH_THRESHOLD}</span>
                   </div>
-                  <input className="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer" max="0.9" min="0.1" step="0.01" type="range" defaultValue="0.92" />
+                  <input 
+                    className="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer" 
+                    max="0.9" min="0.1" step="0.01" type="range" 
+                    value={settings.IRIS_MATCH_THRESHOLD || 0} 
+                    onChange={(e) => handleChange('IRIS_MATCH_THRESHOLD', e.target.value)}
+                  />
                 </div>
                 <div className="border-t border-outline-variant pt-lg">
                   <div className="flex justify-between mb-md">
                     <label className="font-body-lg text-body-lg">Liveness Detection (PAD)</label>
-                    <span className="text-primary font-bold">0.75</span>
+                    <span className="text-primary font-bold">{settings.LIVENESS_THRESHOLD}</span>
                   </div>
-                  <input className="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer" max="0.9" min="0.1" step="0.01" type="range" defaultValue="0.75" />
+                  <input 
+                    className="w-full h-2 bg-surface-container rounded-lg appearance-none cursor-pointer" 
+                    max="0.9" min="0.1" step="0.01" type="range" 
+                    value={settings.LIVENESS_THRESHOLD || 0} 
+                    onChange={(e) => handleChange('LIVENESS_THRESHOLD', e.target.value)}
+                  />
                   <p className="text-xs text-on-surface-variant mt-sm">Presentation Attack Detection sensitivity. Critical for anti-spoofing.</p>
                 </div>
               </div>
             </div>
             <div className="flex justify-end">
-              <button className="bg-primary-container text-on-primary-container font-semibold px-xl py-md rounded-lg shadow-sm hover:brightness-95 transition-all flex items-center gap-md active:scale-98">
+              <button onClick={handleSave} className="bg-primary-container text-on-primary-container font-semibold px-xl py-md rounded-lg shadow-sm hover:brightness-95 transition-all flex items-center gap-md active:scale-98">
                 <span className="material-symbols-outlined">save</span> Save Thresholds
               </button>
             </div>

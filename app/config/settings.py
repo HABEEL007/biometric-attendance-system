@@ -32,7 +32,7 @@ class Settings:
     DATABASE_PATH = BASE_DIR / os.getenv("DATABASE_PATH", "data/attendance.db")
     
     # Biometric Thresholds
-    FACE_MATCH_THRESHOLD = float(os.getenv("FACE_MATCH_THRESHOLD", 0.50))
+    FACE_MATCH_THRESHOLD = float(os.getenv("FACE_MATCH_THRESHOLD", 0.40))
     IRIS_MATCH_THRESHOLD = float(os.getenv("IRIS_MATCH_THRESHOLD", 0.65))
     IRIS_DEMO_THRESHOLD = float(os.getenv("IRIS_DEMO_THRESHOLD", 0.65))
     LIVENESS_THRESHOLD = float(os.getenv("LIVENESS_THRESHOLD", 0.70))

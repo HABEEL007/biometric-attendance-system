@@ -38,6 +38,19 @@ class FaceDetector:
         except Exception as e:
             logger.error(f"Failed to initialize FaceDetector background task: {e}", exc_info=True)
 
+    def _apply_clahe(self, image: np.ndarray) -> np.ndarray:
+        """Applies CLAHE on the lightness channel to improve contrast and handle bad lighting."""
+        try:
+            lab = cv2.cvtColor(image, cv2.COLOR_BGR2LAB)
+            l_channel, a, b = cv2.split(lab)
+            clahe = cv2.createCLAHE(clipLimit=2.0, tileGridSize=(8,8))
+            cl = clahe.apply(l_channel)
+            limg = cv2.merge((cl,a,b))
+            return cv2.cvtColor(limg, cv2.COLOR_LAB2BGR)
+        except Exception as e:
+            logger.warning(f"CLAHE failed, using original image: {e}")
+            return image
+
     def detect_and_embed(self, image: np.ndarray) -> dict:
         """
         Detects face, landmarks, and computes 512-D embedding using InsightFace.
@@ -47,7 +60,9 @@ class FaceDetector:
         if not self.is_ready or self.app is None:
             return {"success": False, "message": "Face model is still downloading or initializing"}
             
-        faces = self.app.get(image)
+        # Apply CLAHE to improve detection and embeddings in harsh lighting
+        enhanced_image = self._apply_clahe(image)
+        faces = self.app.get(enhanced_image)
         
         if len(faces) == 0:
             return {"success": False, "message": "No face detected"}

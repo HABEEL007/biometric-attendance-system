@@ -53,20 +53,20 @@ class VerificationPipeline:
         """Runs quality checks on the raw frame before running heavy AI APIs."""
         # 1. Blurriness Check
         blur_val = calculate_blurriness(frame)
-        if blur_val < 2.0: # Minimum acceptable sharpness
+        if blur_val < 15.0: # Minimum acceptable sharpness
             return False, f"Image too blurry (variance: {blur_val:.1f})"
 
         # 2. Lighting Check (Brightness average)
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         mean_brightness = np.mean(gray)
-        if mean_brightness < 40.0:
+        if mean_brightness < 60.0:
             return False, f"Image too dark (brightness: {mean_brightness:.1f})"
-        if mean_brightness > 220.0:
+        if mean_brightness > 200.0:
             return False, f"Image too bright/washed out (brightness: {mean_brightness:.1f})"
 
         # 3. Minimum dimensions
         h, w = frame.shape[:2]
-        if h < 240 or w < 320:
+        if h < 64 or w < 64:
             return False, f"Image resolution too low ({w}x{h})"
 
         return True, "Quality Check PASS"
@@ -310,7 +310,8 @@ class VerificationPipeline:
                 "liveness_score": float(liveness_score),
                 "liveness_passed": bool(liveness_passed),
                 "final_score": decision["final_score"],
-                "snapshot": f"/api/v1/attendance/snapshot/{filename}" if decision["approved"] else None
+                "snapshot": f"/api/v1/attendance/snapshot/{filename}" if decision["approved"] else None,
+                "bbox": face_data.get("bbox") if face_data else None
             }
             
         except Exception as e:

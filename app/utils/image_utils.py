@@ -13,9 +13,21 @@ def frame_to_base64(frame: np.ndarray) -> str:
 
 def base64_to_frame(b64_str: str) -> np.ndarray:
     """Converts a base64 string to a numpy frame."""
+    if ',' in b64_str:
+        b64_str = b64_str.split(',')[1]
+        
+    # Ensure correct padding
+    missing_padding = len(b64_str) % 4
+    if missing_padding:
+        b64_str += '=' * (4 - missing_padding)
+        
     img_data = base64.b64decode(b64_str)
     nparr = np.frombuffer(img_data, np.uint8)
     frame = cv2.imdecode(nparr, cv2.IMREAD_COLOR)
+    
+    if frame is None:
+        raise ValueError("Could not decode image from base64 string. The image data may be invalid.")
+        
     return frame
 
 def bytes_to_frame(image_bytes: bytes) -> np.ndarray:

@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_URL = 'http://localhost:8000';
+export const API_URL = 'http://localhost:8000';
 
 const apiClient = axios.create({
   baseURL: API_URL,
@@ -88,6 +88,16 @@ export const login = async (payload) => {
 
 export const signup = async (payload) => {
   const response = await apiClient.post('/auth/signup', payload);
+  return response.data;
+};
+
+export const getSettings = async () => {
+  const response = await apiClient.get('/settings');
+  return response.data;
+};
+
+export const updateSettings = async (payload) => {
+  const response = await apiClient.post('/settings', payload);
   return response.data;
 };
 

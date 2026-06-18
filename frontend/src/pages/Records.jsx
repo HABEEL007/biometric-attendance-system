@@ -29,6 +29,26 @@ const Records = () => {
     }
   };
 
+  const handleExportCSV = () => {
+    if (records.length === 0) {
+      alert("No records to export for this date.");
+      return;
+    }
+    const headers = ['Timestamp', 'Employee Name', 'ID', 'Type', 'Biometric Score', 'Status'];
+    const csvContent = [
+      headers.join(','),
+      ...records.map(r => `"${r.timestamp}","${r.staff_name || 'Unknown'}","${r.staff_id || ''}","${r.event_type || 'Check-in'}","${(r.face_score * 100 || 0).toFixed(1)}%","${r.status || ''}"`)
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', `attendance_records_${date}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const getStatusColor = (status) => {
     if (status === 'APPROVED' || status?.toLowerCase() === 'present') {
       return (
@@ -98,7 +118,7 @@ const Records = () => {
           </div>
         </form>
         <div className="flex items-end self-end h-full pt-6">
-          <button className="bg-primary-container text-on-primary-container font-label-md text-label-md px-xl py-sm rounded-lg flex items-center gap-sm hover:opacity-90 active:scale-95 transition-all shadow-sm">
+          <button onClick={handleExportCSV} className="bg-primary-container text-on-primary-container font-label-md text-label-md px-xl py-sm rounded-lg flex items-center gap-sm hover:opacity-90 active:scale-95 transition-all shadow-sm">
             <span className="material-symbols-outlined text-[18px]">download</span>
             EXPORT RECORDS
           </button>

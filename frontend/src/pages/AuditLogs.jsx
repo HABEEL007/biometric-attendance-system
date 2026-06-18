@@ -24,6 +24,26 @@ const AuditLogs = () => {
     }
   };
 
+  const handleExportCSV = () => {
+    if (logs.length === 0) {
+      alert("No logs to export.");
+      return;
+    }
+    const headers = ['Timestamp', 'Event Type', 'Description', 'User', 'ID', 'Station'];
+    const csvContent = [
+      headers.join(','),
+      ...logs.map(log => `"${log.timestamp}","${log.event_type || ''}","${log.reject_reason || (log.status === 'APPROVED' ? 'Authentication successful.' : 'Log entry recorded.')}","${log.staff_name || 'Unknown'}","${log.staff_id || ''}","${log.camera_id || ''}"`)
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', `audit_logs.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   const getEventBadge = (status, eventType) => {
     if (status === 'REJECTED' || eventType?.toLowerCase().includes('spoof')) {
       return (
@@ -75,10 +95,16 @@ const AuditLogs = () => {
               <input className="w-full bg-surface border border-outline-variant rounded-lg pl-10 pr-md py-sm focus:ring-2 focus:ring-primary-container focus:border-primary outline-none transition-all" placeholder="Name or ID..." type="text" />
             </div>
           </div>
-          <button onClick={fetchLogs} className="px-lg py-[10px] bg-surface-container-high text-on-surface font-semibold rounded-lg hover:bg-surface-variant transition-colors flex items-center gap-sm active:scale-95">
-            <span className="material-symbols-outlined text-[18px]">refresh</span>
-            <span>Refresh</span>
-          </button>
+          <div className="flex gap-sm">
+            <button onClick={fetchLogs} className="px-lg py-[10px] bg-surface-container-high text-on-surface font-semibold rounded-lg hover:bg-surface-variant transition-colors flex items-center gap-sm active:scale-95">
+              <span className="material-symbols-outlined text-[18px]">refresh</span>
+              <span>Refresh</span>
+            </button>
+            <button onClick={handleExportCSV} className="px-lg py-[10px] bg-primary-container text-on-primary-container font-semibold rounded-lg hover:opacity-90 transition-opacity flex items-center gap-sm active:scale-95">
+              <span className="material-symbols-outlined text-[18px]">download</span>
+              <span>Export CSV</span>
+            </button>
+          </div>
         </section>
 
         {error && (
@@ -98,7 +124,6 @@ const AuditLogs = () => {
                   <th className="px-lg py-md font-label-md text-on-surface-variant uppercase tracking-wider">Description</th>
                   <th className="px-lg py-md font-label-md text-on-surface-variant uppercase tracking-wider">User / ID</th>
                   <th className="px-lg py-md font-label-md text-on-surface-variant uppercase tracking-wider">Station</th>
-                  <th className="px-lg py-md font-label-md text-on-surface-variant uppercase tracking-wider">Action</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-outline-variant">
@@ -130,11 +155,6 @@ const AuditLogs = () => {
                       <td className="px-lg py-lg">
                         <div className="font-body-md text-on-surface">{log.camera_id}</div>
                       </td>
-                      <td className="px-lg py-lg text-right">
-                        <button className="p-sm hover:bg-surface-variant rounded-full text-on-surface-variant">
-                          <span className="material-symbols-outlined">more_vert</span>
-                        </button>
-                      </td>
                     </tr>
                   ))
                 )}
@@ -144,15 +164,6 @@ const AuditLogs = () => {
           {/* Pagination */}
           <div className="px-lg py-md bg-surface-container-low flex justify-between items-center border-t border-outline-variant">
             <p className="text-label-sm text-on-surface-variant">Showing {logs.length} events</p>
-            <div className="flex gap-xs">
-              <button className="p-xs bg-surface-container-lowest border border-outline-variant rounded hover:bg-surface-variant transition-colors disabled:opacity-50" disabled>
-                <span className="material-symbols-outlined">chevron_left</span>
-              </button>
-              <button className="px-sm py-xs bg-primary text-on-primary font-bold rounded text-label-sm">1</button>
-              <button className="p-xs bg-surface-container-lowest border border-outline-variant rounded hover:bg-surface-variant transition-colors disabled:opacity-50" disabled>
-                <span className="material-symbols-outlined">chevron_right</span>
-              </button>
-            </div>
           </div>
         </div>
     </div>

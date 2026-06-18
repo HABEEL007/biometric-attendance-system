@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getStaff, getAuditLogs } from '../services/api';
 
 const Dashboard = () => {
+  const navigate = useNavigate();
   const [stats, setStats] = useState({ totalStaff: 0, todayCheckins: 0, alerts: 0 });
   const [logs, setLogs] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -43,11 +45,11 @@ const Dashboard = () => {
             <p className="text-on-surface-variant text-body-lg">Here's what's happening in your enterprise biometric network today.</p>
           </div>
           <div className="flex gap-sm mt-4 md:mt-0">
-            <button onClick={() => window.location.href = '/live'} className="bg-primary-container text-on-primary-container font-semibold py-3 px-6 rounded-lg flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
+            <button onClick={() => navigate('/live-monitor')} className="bg-primary-container text-on-primary-container font-semibold py-3 px-6 rounded-lg flex items-center gap-2 hover:opacity-90 active:scale-95 transition-all shadow-sm">
               <span className="material-symbols-outlined" data-icon="videocam">videocam</span>
               Start Live Monitor
             </button>
-            <button onClick={() => window.location.href = '/enrollment'} className="bg-surface border border-outline text-on-surface font-semibold py-3 px-6 rounded-lg flex items-center gap-2 hover:bg-surface-container-high active:scale-95 transition-all">
+            <button onClick={() => navigate('/enrollment')} className="bg-surface border border-outline text-on-surface font-semibold py-3 px-6 rounded-lg flex items-center gap-2 hover:bg-surface-container-high active:scale-95 transition-all">
               <span className="material-symbols-outlined" data-icon="person_add">person_add</span>
               Enroll New Staff
             </button>
@@ -205,7 +207,7 @@ const Dashboard = () => {
           <div className="col-span-12 bg-surface rounded-xl border border-outline-variant shadow-sm overflow-hidden mt-6">
             <div className="px-lg py-6 border-b border-outline-variant flex justify-between items-center">
               <h3 className="text-headline-md font-bold text-on-surface">Recent Activity</h3>
-              <button onClick={() => window.location.href = '/logs'} className="text-primary font-semibold text-body-md hover:underline">View All Records</button>
+              <button onClick={() => navigate('/audit-logs')} className="text-primary font-semibold text-body-md hover:underline">View All Records</button>
             </div>
             <div className="overflow-x-auto">
               <table className="w-full text-left border-collapse">

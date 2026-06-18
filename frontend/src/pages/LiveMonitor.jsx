@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { startCamera, stopCamera, getCameraStatus, processSnapshot, verifyFrame } from '../services/api';
+import { startCamera, stopCamera, getCameraStatus, processSnapshot, verifyFrame, API_URL } from '../services/api';
 
 const LiveMonitor = () => {
   const [status, setStatus] = useState('INACTIVE');
@@ -56,6 +56,14 @@ const LiveMonitor = () => {
   }, [selectedDeviceId]);
 
   useEffect(() => {
+    if (status === 'ACTIVE' && useLocalWebcam && videoRef.current && streamRef.current) {
+      if (videoRef.current.srcObject !== streamRef.current) {
+        videoRef.current.srcObject = streamRef.current;
+      }
+    }
+  }, [status, useLocalWebcam]);
+
+  useEffect(() => {
     if (autoDetect && status === 'ACTIVE') {
       autoDetectInterval.current = setInterval(() => {
         if (!loading) {
@@ -76,6 +84,11 @@ const LiveMonitor = () => {
 
   const startLocalCamera = async () => {
     try {
+      // Stop old stream before starting a new one
+      if (streamRef.current) {
+        streamRef.current.getTracks().forEach(track => track.stop());
+      }
+      
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
         const constraints = {
           video: selectedDeviceId ? 
@@ -91,6 +104,7 @@ const LiveMonitor = () => {
       }
     } catch (err) {
       console.error("Error accessing local webcam:", err);
+      alert("Camera access error: " + err.message + "\nMake sure the camera is not being used by another application.");
       setStatus('OFFLINE');
     }
   };
@@ -110,7 +124,7 @@ const LiveMonitor = () => {
   const checkStatus = async () => {
     try {
       const data = await getCameraStatus();
-      setStatus(data.is_running ? 'ACTIVE' : 'INACTIVE');
+      setStatus(data.is_running ? (data.status === 'CONNECTED' ? 'ACTIVE' : data.status) : 'INACTIVE');
     } catch (err) {
       setStatus('OFFLINE');
     }
@@ -223,6 +237,15 @@ const LiveMonitor = () => {
                   ))}
                 </select>
               )}
+              {!useLocalWebcam && (
+                <input 
+                  type="text" 
+                  value={rtspUrl}
+                  onChange={(e) => setRtspUrl(e.target.value)}
+                  placeholder="RTSP Stream URL (default: 0)"
+                  className="bg-surface border border-outline-variant rounded-lg px-md py-2 text-body-md focus:border-primary-container focus:ring-1 focus:ring-primary-container outline-none min-w-[250px]"
+                />
+              )}
               
               <div className="flex bg-surface-variant rounded-lg p-1 border border-outline-variant">
                 <button 
@@ -239,7 +262,7 @@ const LiveMonitor = () => {
                 </button>
               </div>
 
-              {status !== 'ACTIVE' ? (
+              {status === 'INACTIVE' || status === 'OFFLINE' ? (
                 <button onClick={handleStart} disabled={loading} className="bg-primary-container text-on-primary-container px-lg py-2 rounded-lg font-bold shadow-sm hover:opacity-90 transition-opacity flex items-center gap-xs">
                   <span className="material-symbols-outlined">play_arrow</span> Start
                 </button>
@@ -261,24 +284,14 @@ const LiveMonitor = () => {
                     <canvas ref={canvasRef} className="hidden" />
                   </>
                 ) : (
-                  <img src="http://127.0.0.1:8000/camera/stream" alt="Live Stream" className="w-full h-full object-cover" />
+                  <img src={`${API_URL}/camera/stream?t=${Date.now()}`} alt="Live Stream" className="w-full h-full object-cover" />
                 )}
                 {/* Scanning HUD */}
                 <div className="absolute inset-0 pointer-events-none">
-                  {autoDetect && <div className="absolute w-full h-[2px] bg-primary shadow-[0_0_15px_#ffc107] animate-[scan_3s_linear_infinite]" />}
                   <div className="absolute top-md left-md bg-black/60 text-white px-md py-xs rounded flex items-center gap-xs">
                     <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse"></div>
                     <span className="text-label-md">LIVE RECAP</span>
                   </div>
-                  {autoDetect && (
-                    <div className="absolute top-1/4 left-1/3 w-48 h-48 border-2 border-primary-container/60">
-                      <div className="absolute top-0 left-0 w-5 h-5 border-t-4 border-l-4 border-primary-container"></div>
-                      <div className="absolute top-0 right-0 w-5 h-5 border-t-4 border-r-4 border-primary-container"></div>
-                      <div className="absolute bottom-0 left-0 w-5 h-5 border-b-4 border-l-4 border-primary-container"></div>
-                      <div className="absolute bottom-0 right-0 w-5 h-5 border-b-4 border-r-4 border-primary-container"></div>
-                      <div className="absolute -top-6 left-0 bg-primary-container text-on-primary-container px-xs text-[10px] font-bold">SCANNING...</div>
-                    </div>
-                  )}
                 </div>
 
                 <div className="absolute top-4 right-4 flex items-center gap-2 bg-surface/80 backdrop-blur-md px-3 py-1.5 rounded-lg border border-outline-variant z-10">
@@ -298,6 +311,16 @@ const LiveMonitor = () => {
                   </button>
                 )}
               </>
+            ) : status === 'CONNECTING' ? (
+              <div className="flex flex-col items-center justify-center h-full bg-surface-container text-outline-variant">
+                <span className="material-symbols-outlined text-[64px] mb-4 opacity-50 animate-spin">sync</span>
+                <p>Connecting to Camera Stream...</p>
+              </div>
+            ) : status === 'ERROR' ? (
+              <div className="flex flex-col items-center justify-center h-full bg-surface-container text-error">
+                <span className="material-symbols-outlined text-[64px] mb-4 opacity-80">error</span>
+                <p>Failed to connect to camera source</p>
+              </div>
             ) : (
               <div className="flex flex-col items-center justify-center h-full bg-surface-container text-outline-variant">
                 <span className="material-symbols-outlined text-[64px] mb-4 opacity-50">videocam_off</span>
@@ -346,23 +369,23 @@ const LiveMonitor = () => {
               <div className="space-y-lg">
                 <div className="flex items-center justify-between">
                   <span className="text-body-md font-semibold text-on-surface-variant">Face Match Status</span>
-                  <span className={`px-md py-xs rounded-full text-label-md font-bold flex items-center gap-xs ${snapshotResult.checks?.face_match ? 'bg-green-100 text-green-800' : 'bg-error-container text-error'}`}>
-                    <span className="material-symbols-outlined text-[16px]">{snapshotResult.checks?.face_match ? 'check_circle' : 'cancel'}</span> 
-                    {snapshotResult.scores?.face_similarity ? (snapshotResult.scores.face_similarity * 100).toFixed(1) + '%' : 'N/A'}
+                  <span className={`px-md py-xs rounded-full text-label-md font-bold flex items-center gap-xs ${snapshotResult.face_score >= 0.40 ? 'bg-green-100 text-green-800' : 'bg-error-container text-error'}`}>
+                    <span className="material-symbols-outlined text-[16px]">{snapshotResult.face_score >= 0.40 ? 'check_circle' : 'cancel'}</span> 
+                    {snapshotResult.face_score !== undefined ? (snapshotResult.face_score * 100).toFixed(1) + '%' : 'N/A'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-body-md font-semibold text-on-surface-variant">Iris Verification</span>
-                  <span className={`px-md py-xs rounded-full text-label-md font-bold flex items-center gap-xs ${snapshotResult.checks?.iris_match ? 'bg-green-100 text-green-800' : 'bg-error-container text-error'}`}>
-                    <span className="material-symbols-outlined text-[16px]">{snapshotResult.checks?.iris_match ? 'check_circle' : 'cancel'}</span> 
-                    {snapshotResult.scores?.iris_similarity ? (snapshotResult.scores.iris_similarity * 100).toFixed(1) + '%' : '0.0%'}
+                  <span className={`px-md py-xs rounded-full text-label-md font-bold flex items-center gap-xs ${snapshotResult.iris_passed ? 'bg-green-100 text-green-800' : 'bg-error-container text-error'}`}>
+                    <span className="material-symbols-outlined text-[16px]">{snapshotResult.iris_passed ? 'check_circle' : 'cancel'}</span> 
+                    {snapshotResult.iris_score !== undefined ? (snapshotResult.iris_score * 100).toFixed(1) + '%' : '0.0%'}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-body-md font-semibold text-on-surface-variant">Liveness Check</span>
-                  <span className={`px-md py-xs rounded-full text-label-md font-bold flex items-center gap-xs ${snapshotResult.checks?.liveness_passed ? 'bg-green-100 text-green-800' : 'bg-error-container text-error'}`}>
-                    <span className="material-symbols-outlined text-[16px]">{snapshotResult.checks?.liveness_passed ? 'check_circle' : 'cancel'}</span> 
-                    {snapshotResult.scores?.liveness_score ? (snapshotResult.scores.liveness_score * 100).toFixed(1) + '%' : 'N/A'}
+                  <span className={`px-md py-xs rounded-full text-label-md font-bold flex items-center gap-xs ${snapshotResult.liveness_passed ? 'bg-green-100 text-green-800' : 'bg-error-container text-error'}`}>
+                    <span className="material-symbols-outlined text-[16px]">{snapshotResult.liveness_passed ? 'check_circle' : 'cancel'}</span> 
+                    {snapshotResult.liveness_score !== undefined ? (snapshotResult.liveness_score * 100).toFixed(1) + '%' : 'N/A'}
                   </span>
                 </div>
                 <hr className="border-outline-variant" />

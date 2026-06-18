@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { enrollStaff } from '../services/api';
 
 const Enrollment = () => {
+  const navigate = useNavigate();
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     employee_id: '',
@@ -259,7 +261,7 @@ const Enrollment = () => {
             <p className="text-on-surface-variant mb-xl">The biometric profile for {formData.name || 'the employee'} has been successfully added to the enterprise secure database.</p>
             <div className="flex flex-col gap-3">
               <button onClick={resetForm} className="bg-primary-container text-on-primary-container py-3 rounded-lg font-bold hover:opacity-90">New Enrollment</button>
-              <button onClick={() => window.location.href = '/'} className="text-primary font-semibold py-3 hover:bg-surface-container rounded-lg">Return to Dashboard</button>
+              <button onClick={() => navigate('/')} className="text-primary font-semibold py-3 hover:bg-surface-container rounded-lg">Return to Dashboard</button>
             </div>
           </div>
         </div>

@@ -1,10 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { getStaff, deleteStaff } from '../services/api';
+import { useNavigate } from 'react-router-dom';
 
 const Staff = () => {
   const [staffList, setStaffList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchStaff();
@@ -36,6 +38,23 @@ const Staff = () => {
     }
   };
 
+  const handleExportCSV = () => {
+    if (staffList.length === 0) return;
+    const headers = ['ID', 'Name', 'Department', 'Role', 'Status'];
+    const csvContent = [
+      headers.join(','),
+      ...staffList.map(s => `"${s.employee_id}","${s.name || ''}","${s.department || ''}","${s.role || ''}","${s.is_active ? 'Active' : 'Inactive'}"`)
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.setAttribute('download', 'staff_directory.csv');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
   return (
     <div className="p-xl max-w-container-max mx-auto w-full">
       <section className="space-y-lg">
@@ -50,10 +69,16 @@ const Staff = () => {
             <h2 className="font-headline-lg text-headline-lg text-on-surface">Staff Directory</h2>
             <p className="font-body-md text-body-md text-on-surface-variant">Manage and monitor biometric enrollment for your enterprise workforce.</p>
           </div>
-          <button className="bg-primary-container text-on-primary-container px-lg py-md rounded-lg font-body-md font-bold flex items-center gap-sm shadow-sm hover:opacity-90 active:scale-95 transition-all">
-            <span className="material-symbols-outlined">person_add</span>
-            Add New Staff
-          </button>
+          <div className="flex gap-md">
+            <button onClick={handleExportCSV} className="bg-surface border border-outline-variant text-on-surface-variant px-lg py-md rounded-lg font-body-md font-bold flex items-center gap-sm shadow-sm hover:bg-surface-container transition-all">
+              <span className="material-symbols-outlined">download</span>
+              Export CSV
+            </button>
+            <button onClick={() => navigate('/enrollment')} className="bg-primary-container text-on-primary-container px-lg py-md rounded-lg font-body-md font-bold flex items-center gap-sm shadow-sm hover:opacity-90 active:scale-95 transition-all">
+              <span className="material-symbols-outlined">person_add</span>
+              Add New Staff
+            </button>
+          </div>
         </div>
 
         {error && (
@@ -132,8 +157,6 @@ const Staff = () => {
                       </td>
                       <td className="px-lg py-md text-right">
                         <div className="flex items-center justify-end gap-sm opacity-0 group-hover:opacity-100 transition-opacity">
-                          <button className="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary" title="View"><span className="material-symbols-outlined text-[20px]">visibility</span></button>
-                          <button className="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-primary" title="Edit"><span className="material-symbols-outlined text-[20px]">edit</span></button>
                           <button onClick={() => handleDelete(staff.employee_id)} className="p-xs hover:bg-surface-container-highest rounded-md text-on-surface-variant hover:text-error" title="Delete"><span className="material-symbols-outlined text-[20px]">delete</span></button>
                         </div>
                       </td>
@@ -146,15 +169,6 @@ const Staff = () => {
           {/* Pagination */}
           <div className="bg-surface border-t border-outline-variant px-lg py-md flex items-center justify-between">
             <p className="font-label-md text-label-md text-on-surface-variant">Showing {staffList.length} results</p>
-            <div className="flex items-center gap-xs">
-              <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40" disabled>
-                <span className="material-symbols-outlined text-[18px]">chevron_left</span>
-              </button>
-              <button className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-container text-on-primary-container font-body-md font-bold">1</button>
-              <button className="w-8 h-8 flex items-center justify-center rounded-lg border border-outline-variant text-on-surface-variant hover:bg-surface-container transition-colors disabled:opacity-40" disabled>
-                <span className="material-symbols-outlined text-[18px]">chevron_right</span>
-              </button>
-            </div>
           </div>
         </div>
       </section>

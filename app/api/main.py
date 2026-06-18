@@ -1,7 +1,7 @@
 import uvicorn
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from app.api.routes import staff_routes, enrollment_routes, attendance_routes, camera_routes, auth_routes
+from app.api.routes import staff_routes, enrollment_routes, attendance_routes, camera_routes, auth_routes, settings_routes
 from app.config.settings import settings
 from app.utils.logger import setup_logger
 
@@ -28,6 +28,7 @@ app.include_router(enrollment_routes.router)
 app.include_router(attendance_routes.router)
 app.include_router(camera_routes.router)
 app.include_router(auth_routes.router)
+app.include_router(settings_routes.router)
 
 @app.get("/")
 def read_root():

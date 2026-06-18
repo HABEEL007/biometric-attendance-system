@@ -1,12 +1,11 @@
 import { NavLink } from 'react-router-dom';
-import logo from '../../assets/logo.png';
 
 const Sidebar = () => {
   return (
     <aside className="flex flex-col h-full py-6 gap-2 sticky left-0 top-0 overflow-y-auto bg-surface/40 backdrop-blur-xl border-r border-outline-variant w-64 shrink-0 shadow-[0_0_40px_rgba(139,92,246,0.1)]">
       <div className="px-6 mb-8 flex flex-col items-center justify-center text-center">
-        <div className="w-20 h-20 mb-3 rounded-2xl overflow-hidden shadow-[0_0_20px_rgba(139,92,246,0.3)] border border-primary/30">
-            <img src={logo} alt="BioAttend Logo" className="w-full h-full object-cover" />
+        <div className="w-20 h-20 mb-3 rounded-2xl bg-gradient-to-br from-primary to-[#a9c7ff] flex items-center justify-center shadow-[0_0_20px_rgba(29,78,216,0.3)]">
+            <span className="material-symbols-outlined text-white text-[48px]" style={{ fontVariationSettings: "'FILL' 1" }}>fingerprint</span>
         </div>
         <div className="font-headline-md text-headline-md font-bold text-primary bg-clip-text text-transparent bg-gradient-to-r from-primary to-secondary">BioAttend</div>
         <div className="font-label-md text-label-md text-on-surface-variant">Enterprise Biometrics</div>
