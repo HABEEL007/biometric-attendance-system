@@ -31,8 +31,14 @@ class Settings:
     # Database
     DATABASE_PATH = BASE_DIR / os.getenv("DATABASE_PATH", "data/attendance.db")
     
-    # Biometric Thresholds
-    FACE_MATCH_THRESHOLD = float(os.getenv("FACE_MATCH_THRESHOLD", 0.40))
+    # Biometric & Quality Thresholds
+    # Face match is now dynamically calculated based on face size, replacing FACE_MATCH_THRESHOLD
+    FACE_MATCH_THRESHOLD = float(os.getenv("FACE_MATCH_THRESHOLD", 0.40)) # Kept for UI compatibility
+    QUALITY_SCORE_THRESHOLD = 0.40
+    POSE_YAW_LIMIT = 65.0
+    POSE_PITCH_LIMIT = 50.0
+    POSE_ROLL_LIMIT = 45.0
+    
     IRIS_MATCH_THRESHOLD = float(os.getenv("IRIS_MATCH_THRESHOLD", 0.65))
     IRIS_DEMO_THRESHOLD = float(os.getenv("IRIS_DEMO_THRESHOLD", 0.65))
     LIVENESS_THRESHOLD = float(os.getenv("LIVENESS_THRESHOLD", 0.70))

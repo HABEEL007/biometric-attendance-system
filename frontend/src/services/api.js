@@ -11,7 +11,7 @@ const apiClient = axios.create({
 
 // Add request interceptor to attach token
 apiClient.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
@@ -22,9 +22,12 @@ apiClient.interceptors.request.use((config) => {
 apiClient.interceptors.response.use(
   (response) => response,
   (error) => {
-    if (error.response && error.response.status === 401) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
+    // Exclude /auth/login from redirecting to prevent page refresh loop on bad passwords
+    const isLoginEndpoint = error.config && error.config.url && error.config.url.includes('/auth/login');
+    
+    if (error.response && error.response.status === 401 && !isLoginEndpoint) {
+      sessionStorage.removeItem('token');
+      sessionStorage.removeItem('user');
       window.location.href = '/login';
     }
     return Promise.reject(error);
@@ -56,6 +59,11 @@ export const getAttendanceReport = async (date) => {
   return response.data;
 };
 
+export const deleteAttendanceRecord = async (recordId) => {
+  const response = await apiClient.delete(`/attendance/records/${recordId}`);
+  return response.data;
+};
+
 export const startCamera = async (payload) => {
   const response = await apiClient.post('/camera/start', payload);
   return response.data;
@@ -63,6 +71,11 @@ export const startCamera = async (payload) => {
 
 export const stopCamera = async () => {
   const response = await apiClient.post('/camera/stop');
+  return response.data;
+};
+
+export const startWebRTC = async (offer) => {
+  const response = await apiClient.post('/camera/webrtc/offer', offer);
   return response.data;
 };
 

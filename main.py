@@ -37,8 +37,7 @@ def main():
         face_proc = start_microservice("services.face_service.main", 8001, "Face Recognition")
         processes.append((face_proc, "Face Service"))
         
-        iris_proc = start_microservice("services.iris_service.main", 8002, "Iris Verification")
-        processes.append((iris_proc, "Iris Service"))
+        # Iris Verification Service is disabled as per user request
         
         liveness_proc = start_microservice("services.liveness_service.main", 8003, "Liveness & Anti-Spoofing")
         processes.append((liveness_proc, "Liveness Service"))

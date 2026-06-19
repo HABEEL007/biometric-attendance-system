@@ -71,3 +71,5 @@ Thumbs.db
 # Extra files / Datasets
 experiments_and_datasets/
 frontend/node_modules/
+dataset/
+yolo11n.pt

@@ -78,7 +78,7 @@ const Dashboard = () => {
               <div className="p-3 rounded-lg bg-tertiary/10 text-tertiary">
                 <span className="material-symbols-outlined" data-icon="badge">badge</span>
               </div>
-              <span class="text-on-surface-variant text-label-md">Global Pool</span>
+              <span className="text-on-surface-variant text-label-md">Global Pool</span>
             </div>
             <p className="text-on-surface-variant text-label-md font-semibold uppercase tracking-tight">Total Staff</p>
             <div className="flex items-baseline gap-2 mt-1">
@@ -234,9 +234,9 @@ const Dashboard = () => {
                         <td className="px-lg py-4">
                           <div className="flex items-center gap-3">
                             <div className="w-8 h-8 rounded-full bg-primary/20 text-primary flex items-center justify-center font-bold text-[10px]">
-                              {log.employee_id.substring(0, 2).toUpperCase()}
+                              {log.employee_id ? log.employee_id.substring(0, 2).toUpperCase() : '?'}
                             </div>
-                            <span className="font-body-md font-semibold">{log.employee_id}</span>
+                            <span className="font-body-md font-semibold">{log.employee_id || 'Unknown'}</span>
                           </div>
                         </td>
                         <td className="px-lg py-4 text-body-md text-on-surface-variant">

@@ -31,6 +31,7 @@ class TrackState:
     status:             str   = "PENDING"   # PENDING / VERIFYING / APPROVED / REJECTED / QUALITY_REJECTED
     attendance_marked:  bool  = False
     bbox:               tuple = (0, 0, 0, 0)
+    rel_face_bbox:      Optional[tuple] = None
 
     def needs_recognition(self) -> bool:
         if self.last_recognized_at is None:
@@ -79,6 +80,7 @@ class TrackManager:
         liveness_score: float,
         final_score:    float,
         status:         str,
+        rel_face_bbox:  Optional[tuple] = None,
     ) -> None:
         state = self.tracks.get(track_id)
         if not state:
@@ -91,6 +93,7 @@ class TrackManager:
         state.liveness_score     = liveness_score
         state.final_score        = final_score
         state.status             = status
+        state.rel_face_bbox      = rel_face_bbox
 
     def cleanup_stale(self, active_track_ids: set[int]) -> None:
         now = time.time()
@@ -115,6 +118,9 @@ class PersonDetectionPipeline:
         print("⏳ YOLOv11n person detection model loading...")
         import torch
         device = "cuda:0" if torch.cuda.is_available() else "cpu"
+        if device == "cuda:0":
+            # Limit PyTorch GPU memory to 70% as requested
+            torch.cuda.set_per_process_memory_fraction(0.7, 0)
         print(f"Using device: {device}")
         self.model  = YOLO(model_path)
         self.device = device
@@ -170,7 +176,29 @@ class FaceRecognitionGate:
         # Call the existing async pipeline
         result = await self.verification_pipeline.process_frame(person_crop, camera_id=f"track_{track_id}")
         
+        crop_w = crop_x2 - crop_x1
+        crop_h = crop_y2 - crop_y1
+        rel_face_bbox = None
+        face_bbox = result.get("bbox")
+        if face_bbox and len(face_bbox) == 4 and crop_w > 0 and crop_h > 0:
+            fx1, fy1, fx2, fy2 = face_bbox
+            rel_face_bbox = (fx1 / crop_w, fy1 / crop_h, fx2 / crop_w, fy2 / crop_h)
+            
         if not result.get("success"):
+            status_val = result.get("status", "REJECTED")
+            msg = result.get("message", "").lower()
+            if status_val == "APPROVED" and "already marked" in msg:
+                return {
+                    "employee_id":     result.get("employee_id"),
+                    "employee_name":   result.get("name"),
+                    "face_score":      result.get("face_score", 0.0),
+                    "iris_score":      result.get("iris_score", 0.0),
+                    "liveness_score":  result.get("liveness_score", 0.0),
+                    "final_score":     result.get("final_score", 0.0),
+                    "status":          "ALREADY MARKED",
+                    "rel_face_bbox":   rel_face_bbox,
+                }
+                
             return {
                 "employee_id":     None,
                 "employee_name":   None,
@@ -178,7 +206,8 @@ class FaceRecognitionGate:
                 "iris_score":      0.0,
                 "liveness_score":  0.0,
                 "final_score":     0.0,
-                "status":          result.get("status", "REJECTED"),
+                "status":          status_val,
+                "rel_face_bbox":   rel_face_bbox,
             }
 
         return {
@@ -189,6 +218,7 @@ class FaceRecognitionGate:
             "liveness_score":  result.get("liveness_score", 0.0),
             "final_score":     result.get("final_score", 0.0),
             "status":          "APPROVED",
+            "rel_face_bbox":   rel_face_bbox,
         }
 
 
@@ -267,6 +297,7 @@ class SmartAttendancePipeline:
                         liveness_score=r["liveness_score"],
                         final_score=r["final_score"],
                         status=r["status"],
+                        rel_face_bbox=r.get("rel_face_bbox"),
                     )
                     
                     if r["status"] == "APPROVED" and not state.attendance_marked:
@@ -304,6 +335,7 @@ def draw_results(frame: np.ndarray, results: list[dict]) -> np.ndarray:
         "PENDING":   (100, 100, 100),
         "VERIFYING": (0, 165, 255),
         "APPROVED":  (0, 200, 0),
+        "ALREADY MARKED": (255, 255, 0), # Cyan
         "REJECTED":  (0, 0, 255),
         "QUALITY_REJECTED": (128, 0, 128)
     }
@@ -314,15 +346,39 @@ def draw_results(frame: np.ndarray, results: list[dict]) -> np.ndarray:
         color = STATUS_COLORS.get(state.status, (255, 255, 255))
 
         cv2.rectangle(frame, (x1, y1), (x2, y2), color, 2)
+        
+        # Draw face bounding box if available
+        if getattr(state, 'rel_face_bbox', None):
+            margin_x = int((x2 - x1) * 0.1)
+            margin_y = int((y2 - y1) * 0.1)
+            crop_x1 = max(0, x1 - margin_x)
+            crop_y1 = max(0, y1 - margin_y)
+            crop_x2 = min(frame.shape[1], x2 + margin_x)
+            crop_y2 = min(frame.shape[0], y2 + margin_y)
+            crop_w = crop_x2 - crop_x1
+            crop_h = crop_y2 - crop_y1
+            
+            rx1, ry1, rx2, ry2 = state.rel_face_bbox
+            fx1 = int(crop_x1 + rx1 * crop_w)
+            fy1 = int(crop_y1 + ry1 * crop_h)
+            fx2 = int(crop_x1 + rx2 * crop_w)
+            fy2 = int(crop_y1 + ry2 * crop_h)
+            
+            # Label for the face
+            face_label = state.employee_name if state.employee_name else "Face"
+            
+            cv2.rectangle(frame, (fx1, fy1), (fx2, fy2), (0, 255, 255), 2)  # Yellow for face
+            cv2.putText(frame, face_label, (fx1, fy1 - 5), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 255), 2)
 
-        label = f"ID:{state.track_id} "
+        # Label for the body
+        body_label = f"ID:{state.track_id} "
         if state.employee_name:
-            label += f"{state.employee_name} ({state.final_score*100:.0f}%)"
+            body_label += f"{state.employee_name} (F:{state.face_match_score*100:.0f}% L:{state.liveness_score*100:.0f}%)"
         else:
-            label += state.status
+            body_label += state.status
 
         cv2.putText(
-            frame, label, (x1, y1 - 8),
+            frame, body_label, (x1, y1 - 8),
             cv2.FONT_HERSHEY_SIMPLEX, 0.6, color, 2,
         )
 

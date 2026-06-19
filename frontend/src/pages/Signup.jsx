@@ -23,8 +23,8 @@ const Signup = () => {
     try {
       const data = await signup({ name, email, password });
       // Success - automatically log them in or redirect to login
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      sessionStorage.setItem('token', data.access_token);
+      sessionStorage.setItem('user', JSON.stringify(data.user));
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.detail || 'Failed to create account.');

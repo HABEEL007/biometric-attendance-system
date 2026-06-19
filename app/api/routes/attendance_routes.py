@@ -75,6 +75,13 @@ def manual_checkin(payload: ManualCheckInPayload):
 
     return {"message": "Attendance marked manually", "record_id": record_id, "staff_name": staff["name"]}
 
+@router.delete("/records/{record_id}")
+def delete_record(record_id: int):
+    success = db.delete_attendance_record(record_id)
+    if not success:
+        raise HTTPException(status_code=404, detail="Attendance record not found or could not be deleted")
+    return {"message": "Attendance record deleted successfully"}
+
 @router.post("/verify-frame")
 async def verify_frame(payload: FrameVerificationPayload):
     """

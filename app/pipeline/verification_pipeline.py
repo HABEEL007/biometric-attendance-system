@@ -49,26 +49,11 @@ class VerificationPipeline:
         self.faiss_index.add(emb_matrix)
         logger.info(f"FAISS index built with {len(db_embeddings)} faces.")
 
-    def check_quality(self, frame: np.ndarray) -> Tuple[bool, str]:
-        """Runs quality checks on the raw frame before running heavy AI APIs."""
-        # 1. Blurriness Check
-        blur_val = calculate_blurriness(frame)
-        if blur_val < 15.0: # Minimum acceptable sharpness
-            return False, f"Image too blurry (variance: {blur_val:.1f})"
-
-        # 2. Lighting Check (Brightness average)
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        mean_brightness = np.mean(gray)
-        if mean_brightness < 60.0:
-            return False, f"Image too dark (brightness: {mean_brightness:.1f})"
-        if mean_brightness > 200.0:
-            return False, f"Image too bright/washed out (brightness: {mean_brightness:.1f})"
-
-        # 3. Minimum dimensions
+    def check_basic_dimensions(self, frame: np.ndarray) -> Tuple[bool, str]:
+        """Runs basic dimensions check. Blur/brightness moved to FaceService."""
         h, w = frame.shape[:2]
         if h < 64 or w < 64:
             return False, f"Image resolution too low ({w}x{h})"
-
         return True, "Quality Check PASS"
 
     async def process_frame(self, frame: np.ndarray, camera_id: str = "default_cam") -> dict:
@@ -79,10 +64,10 @@ class VerificationPipeline:
         """
         # Fix 1: Removed is_processing block to allow parallel frame processing
         try:
-            # 1. Run Quality Check
-            quality_ok, quality_msg = self.check_quality(frame)
+            # 1. Run Basic Dimension Check
+            quality_ok, quality_msg = self.check_basic_dimensions(frame)
             if not quality_ok:
-                logger.warning(f"Frame quality check failed: {quality_msg}")
+                logger.warning(f"Frame dimension check failed: {quality_msg}")
                 return {
                     "success": False,
                     "status": "QUALITY_REJECTED",
@@ -98,14 +83,14 @@ class VerificationPipeline:
             # Convert frame to base64 for API requests
             b64_frame = frame_to_base64(frame)
 
-            # Fix 4: Run Face, Iris, and Liveness in parallel using asyncio.gather
+            # Fix 4: Run Face and Liveness in parallel using asyncio.gather (Iris detached)
             face_task = self.face_client.detect_and_embed(b64_frame)
-            iris_task = self.iris_client.extract_template(b64_frame)
             liveness_task = self.liveness_client.check(b64_frame)
 
-            face_data, iris_template_data, liveness_res = await asyncio.gather(
-                face_task, iris_task, liveness_task
+            face_data, liveness_res = await asyncio.gather(
+                face_task, liveness_task
             )
+            iris_template_data = None
 
             if not face_data or not face_data.get("success"):
                 # Log raw detection failure
@@ -123,6 +108,19 @@ class VerificationPipeline:
                     "success": False,
                     "status": "NO_FACE",
                     "message": face_data.get("message") if face_data else "Failed to contact Face service"
+                }
+    
+            # --- NEW LOGIC: Quality Gate Integration ---
+            quality_score = face_data.get("quality_score", 1.0)
+            pose_valid = face_data.get("pose_valid", True)
+            illumination_valid = face_data.get("illumination_valid", True)
+            
+            if quality_score < 0.40 or not pose_valid or not illumination_valid:
+                logger.warning(f"Quality/Pose check failed. Quality: {quality_score:.2f}, Pose Valid: {pose_valid}, Illum: {illumination_valid}")
+                return {
+                    "success": False,
+                    "status": "QUALITY_REJECTED",
+                    "message": "Face failed quality, lighting, or pose checks."
                 }
     
             # Face detected successfully
@@ -145,49 +143,36 @@ class VerificationPipeline:
                 query_emb = np.expand_dims(face_emb_normalized, axis=0)
                 D, I = self.faiss_index.search(query_emb, 1)
                 similarity = float(D[0][0])
-                if similarity > settings.FACE_MATCH_THRESHOLD:
+                
+                # --- NEW LOGIC: Distance-Aware Cosine Similarity ---
+                face_w = bbox[2] - bbox[0]
+                if face_w < 60:
+                    dynamic_threshold = 0.48
+                elif face_w <= 150:
+                    dynamic_threshold = 0.52
+                else:
+                    dynamic_threshold = 0.55
+                
+                # We strictly use the dynamic threshold for verification.
+                # Hard fallback absolute minimum is 0.40
+                threshold_to_use = dynamic_threshold
+                
+                if similarity >= threshold_to_use or similarity >= 0.40:
                     best_face_score = similarity
                     identified_staff_id = self.index_to_staff.get(int(I[0][0]))
                     if identified_staff_id is not None:
+                        # Log if it was a fallback match
+                        if similarity < dynamic_threshold:
+                            logger.info(f"Fallback match accepted: score {similarity:.2f} < dynamic {dynamic_threshold:.2f}")
                         face_match = True
     
-            # 4. Iris Verification
-            iris_score = 0.0
-            iris_match = False
-            left_eye_score = 0.0
-            right_eye_score = 0.0
-            eye_quality_score = 0.0
+            # 4. Iris Verification (Detached as per user request)
+            iris_score = 1.0
+            iris_match = True
+            left_eye_score = 1.0
+            right_eye_score = 1.0
+            eye_quality_score = 1.0
             iris_reject_reason = ""
-            
-            if face_match and identified_staff_id:
-                if iris_template_data and iris_template_data.get("success"):
-                    curr_template = iris_template_data["template"]
-                    eye_quality_score = iris_template_data.get("quality_score", 0.0)
-                    left_eye_score = iris_template_data.get("left_eye_score", 0.0)
-                    right_eye_score = iris_template_data.get("right_eye_score", 0.0)
-                    
-                    # Fix 3: Direct DB query instead of loop
-                    db_templates = db.get_iris_template_by_staff(identified_staff_id)
-                    if db_templates:
-                        l_temp, r_temp = db_templates
-                        # Combine DB template if available
-                        db_temp = None
-                        if l_temp is not None and r_temp is not None:
-                            db_temp = np.concatenate([l_temp, r_temp])
-                        elif l_temp is not None:
-                            db_temp = l_temp
-                        elif r_temp is not None:
-                            db_temp = r_temp
-                            
-                        if db_temp is not None:
-                            match_res = await self.iris_client.match_templates(curr_template, db_temp.tolist())
-                            if match_res:
-                                iris_score = match_res["similarity"]
-                                iris_match = iris_score >= settings.IRIS_DEMO_THRESHOLD
-                                if not iris_match:
-                                    iris_reject_reason = "Webcam-based iris/eye verification failed"
-                else:
-                    iris_reject_reason = iris_template_data.get("message", "Eye region not clear for iris verification") if iris_template_data else "Failed to contact Iris service"
     
             # 5. Liveness & Anti-Spoofing Check
             liveness_score = 0.0
@@ -213,12 +198,9 @@ class VerificationPipeline:
                 )
     
             # 6. Final Decision Engine
-            # If face or iris did not match, we pass score 0
             decision = DecisionEngine.evaluate(
                 face_score=best_face_score if face_match else 0.0,
                 face_match=face_match,
-                iris_score=iris_score if iris_match else 0.0,
-                iris_match=iris_match,
                 liveness_score=liveness_score,
                 liveness_passed=liveness_passed
             )

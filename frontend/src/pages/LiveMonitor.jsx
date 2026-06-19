@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { startCamera, stopCamera, getCameraStatus, processSnapshot, verifyFrame, API_URL } from '../services/api';
+import { startCamera, stopCamera, getCameraStatus, processSnapshot, verifyFrame, API_URL, startWebRTC } from '../services/api';
 
 const LiveMonitor = () => {
   const [status, setStatus] = useState('INACTIVE');
@@ -15,6 +15,7 @@ const LiveMonitor = () => {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
+  const pcRef = useRef(null);
   const autoDetectInterval = useRef(null);
   const [recentEvents, setRecentEvents] = useState([]);
 
@@ -130,6 +131,28 @@ const LiveMonitor = () => {
     }
   };
 
+  const startBackendWebRTC = async () => {
+    if (pcRef.current) {
+      pcRef.current.close();
+    }
+    const pc = new RTCPeerConnection();
+    pcRef.current = pc;
+    pc.addTransceiver('video', { direction: 'recvonly' });
+    pc.ontrack = (event) => {
+      if (videoRef.current) {
+        videoRef.current.srcObject = event.streams[0];
+      }
+    };
+    const offer = await pc.createOffer();
+    await pc.setLocalDescription(offer);
+    try {
+      const answer = await startWebRTC({ sdp: pc.localDescription.sdp, type: pc.localDescription.type });
+      await pc.setRemoteDescription(answer);
+    } catch (err) {
+      console.error("WebRTC Negotiation Failed:", err);
+    }
+  };
+
   const handleStart = async () => {
     if (useLocalWebcam) {
       await startLocalCamera();
@@ -138,12 +161,23 @@ const LiveMonitor = () => {
       try {
         const source = rtspUrl.trim() !== '' ? rtspUrl : "0";
         await startCamera({ source: source, camera_id: "main_gate" });
+        await startBackendWebRTC();
         await checkStatus();
       } catch (err) {
         console.error(err);
       } finally {
         setLoading(false);
       }
+    }
+  };
+
+  const stopBackendWebRTC = () => {
+    if (pcRef.current) {
+      pcRef.current.close();
+      pcRef.current = null;
+    }
+    if (videoRef.current && !useLocalWebcam) {
+      videoRef.current.srcObject = null;
     }
   };
 
@@ -155,6 +189,7 @@ const LiveMonitor = () => {
       setLoading(true);
       try {
         await stopCamera();
+        stopBackendWebRTC();
         await checkStatus();
         setSnapshotResult(null);
       } catch (err) {
@@ -278,14 +313,8 @@ const LiveMonitor = () => {
           <div className="relative bg-black border-4 border-primary-container rounded-xl overflow-hidden aspect-video shadow-lg group">
             {status === 'ACTIVE' ? (
               <>
-                {useLocalWebcam ? (
-                  <>
-                    <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
-                    <canvas ref={canvasRef} className="hidden" />
-                  </>
-                ) : (
-                  <img src={`${API_URL}/camera/stream?t=${Date.now()}`} alt="Live Stream" className="w-full h-full object-cover" />
-                )}
+                <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+                <canvas ref={canvasRef} className="hidden" />
                 {/* Scanning HUD */}
                 <div className="absolute inset-0 pointer-events-none">
                   <div className="absolute top-md left-md bg-black/60 text-white px-md py-xs rounded flex items-center gap-xs">
@@ -338,8 +367,8 @@ const LiveMonitor = () => {
                   <div key={i} className="flex-shrink-0 w-48 bg-surface-container-low rounded-lg p-xs border border-outline-variant hover:border-primary-container transition-colors cursor-pointer">
                     <div className="relative h-24 rounded overflow-hidden mb-xs bg-surface-variant flex items-center justify-center">
                       <span className="material-symbols-outlined text-4xl text-outline-variant">person</span>
-                      <div className={`absolute bottom-0 right-0 px-xs rounded-tl text-[10px] font-bold ${ev.success ? 'bg-green-100 text-green-800' : 'bg-error-container text-error'}`}>
-                        {ev.success ? 'PASS' : 'FAIL'}
+                      <div className={`absolute bottom-0 right-0 px-xs rounded-tl text-[10px] font-bold ${ev.success ? 'bg-green-100 text-green-800' : (ev.status === 'APPROVED' ? 'bg-[#FFF3E0] text-[#F57C00]' : 'bg-error-container text-error')}`}>
+                        {ev.success ? 'PASS' : (ev.status === 'APPROVED' ? 'DUP' : 'FAIL')}
                       </div>
                     </div>
                     <p className="text-label-md font-bold truncate">{ev.name || 'Unknown'}</p>
@@ -389,15 +418,16 @@ const LiveMonitor = () => {
                   </span>
                 </div>
                 <hr className="border-outline-variant" />
-                <div className={`p-md rounded-lg flex items-center justify-between border ${snapshotResult.success ? 'bg-secondary-container/10 border-secondary-container' : 'bg-error-container/10 border-error'}`}>
+                <div className={`p-md rounded-lg flex items-center justify-between border ${snapshotResult.success ? 'bg-secondary-container/10 border-secondary-container' : (snapshotResult.status === 'APPROVED' ? 'bg-[#FFF3E0] border-[#FF9800]' : 'bg-error-container/10 border-error')}`}>
                   <div>
-                    <p className={`text-label-md font-bold uppercase ${snapshotResult.success ? 'text-on-secondary-container' : 'text-error'}`}>Final Decision</p>
-                    <p className={`text-headline-md font-bold ${snapshotResult.success ? 'text-primary' : 'text-error'}`}>
-                      {snapshotResult.success ? 'ACCESS GRANTED' : 'ACCESS DENIED'}
+                    <p className={`text-label-md font-bold uppercase ${snapshotResult.success ? 'text-on-secondary-container' : (snapshotResult.status === 'APPROVED' ? 'text-[#F57C00]' : 'text-error')}`}>Final Decision</p>
+                    <p className={`text-headline-md font-bold ${snapshotResult.success ? 'text-primary' : (snapshotResult.status === 'APPROVED' ? 'text-[#E65100]' : 'text-error')}`}>
+                      {snapshotResult.success ? 'ACCESS GRANTED' : (snapshotResult.status === 'APPROVED' ? 'ALREADY MARKED' : 'ACCESS DENIED')}
                     </p>
+                    <p className="text-xs font-medium text-on-surface-variant mt-1 max-w-[200px]">{snapshotResult.message}</p>
                   </div>
-                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${snapshotResult.success ? 'bg-primary-container text-on-primary-container' : 'bg-error text-white'}`}>
-                    <span className="material-symbols-outlined text-[32px]">{snapshotResult.success ? 'verified' : 'gpp_bad'}</span>
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${snapshotResult.success ? 'bg-primary-container text-on-primary-container' : (snapshotResult.status === 'APPROVED' ? 'bg-[#FF9800] text-white' : 'bg-error text-white')}`}>
+                    <span className="material-symbols-outlined text-[32px]">{snapshotResult.success ? 'verified' : (snapshotResult.status === 'APPROVED' ? 'info' : 'gpp_bad')}</span>
                   </div>
                 </div>
               </div>

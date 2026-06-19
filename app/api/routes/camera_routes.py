@@ -3,6 +3,11 @@ from fastapi.responses import StreamingResponse
 import cv2
 import time
 import asyncio
+import numpy as np
+import av
+import fractions
+from aiortc import VideoStreamTrack, RTCPeerConnection, RTCSessionDescription
+from pydantic import BaseModel
 from app.api.schemas.models import CameraStartPayload
 from app.camera.camera_manager import CameraManager
 from app.pipeline.verification_pipeline import VerificationPipeline
@@ -17,6 +22,46 @@ camera_manager = None
 pipeline = VerificationPipeline()
 smart_pipeline = SmartAttendancePipeline(pipeline)
 latest_recognition = {"name": "Detecting...", "time": 0}
+
+# WebRTC Global State
+pcs = set()
+
+class WebRTCOffer(BaseModel):
+    sdp: str
+    type: str
+
+class CameraStreamTrack(VideoStreamTrack):
+    """
+    A video stream track that transforms frames from an OpenCV camera.
+    """
+    def __init__(self):
+        super().__init__()  # Initialize the base class
+        
+    async def recv(self):
+        global camera_manager, smart_pipeline
+        pts, time_base = await self.next_timestamp()
+        
+        frame = None
+        if camera_manager is not None and camera_manager.is_running:
+            frame = camera_manager.get_latest_frame()
+            
+        if frame is None:
+            # Send a black frame if no camera is active
+            frame = np.zeros((480, 640, 3), dtype=np.uint8)
+        else:
+            # Process through SmartAttendancePipeline for tracking/bounding boxes
+            results = await smart_pipeline.process(frame)
+            frame = draw_results(frame, results)
+            
+        # Convert BGR (OpenCV) to RGB (PyAV expects RGB)
+        frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+        
+        # Create an av.VideoFrame
+        video_frame = av.VideoFrame.from_ndarray(frame_rgb, format="rgb24")
+        video_frame.pts = pts
+        video_frame.time_base = time_base
+        
+        return video_frame
 
 @router.post("/start")
 def start_camera(payload: CameraStartPayload):
@@ -97,8 +142,37 @@ async def generate_frames_async():
 
 @router.get("/stream")
 async def video_feed():
-    """Stream live MJPEG frames from the active camera."""
+    """Stream live MJPEG frames from the active camera (Legacy/Fallback)."""
     global camera_manager
     if camera_manager is None or not camera_manager.is_running:
         raise HTTPException(status_code=400, detail="Camera is not active.")
     return StreamingResponse(generate_frames_async(), media_type="multipart/x-mixed-replace; boundary=frame")
+
+@router.post("/webrtc/offer")
+async def webrtc_offer(offer: WebRTCOffer):
+    """WebRTC endpoint to establish a low-latency video stream."""
+    global camera_manager
+    if camera_manager is None or not camera_manager.is_running:
+        raise HTTPException(status_code=400, detail="Camera is not active.")
+        
+    pc = RTCPeerConnection()
+    pcs.add(pc)
+
+    @pc.on("connectionstatechange")
+    async def on_connectionstatechange():
+        logger.info(f"WebRTC Connection state is {pc.connectionState}")
+        if pc.connectionState == "failed" or pc.connectionState == "closed":
+            pcs.discard(pc)
+
+    # Attach our custom camera track
+    pc.addTrack(CameraStreamTrack())
+
+    # Create session description from the offer
+    offer_sdp = RTCSessionDescription(sdp=offer.sdp, type=offer.type)
+    await pc.setRemoteDescription(offer_sdp)
+
+    # Generate answer
+    answer = await pc.createAnswer()
+    await pc.setLocalDescription(answer)
+
+    return {"sdp": pc.localDescription.sdp, "type": pc.localDescription.type}

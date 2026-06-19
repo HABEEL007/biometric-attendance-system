@@ -50,8 +50,8 @@ const Header = () => {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     navigate('/login');
   };
 
@@ -69,7 +69,7 @@ const Header = () => {
   };
 
   // Get user details if available
-  const user = JSON.parse(localStorage.getItem('user')) || { name: 'Admin User', role: 'Administrator' };
+  const user = JSON.parse(sessionStorage.getItem('user')) || { name: 'Admin User', role: 'Administrator' };
 
   return (
     <header className="w-full sticky top-0 z-10 bg-surface-container border-b border-outline-variant">

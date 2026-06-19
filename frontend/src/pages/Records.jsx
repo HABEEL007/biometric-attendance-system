@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getAttendanceReport } from '../services/api';
+import { getAttendanceReport, deleteAttendanceRecord } from '../services/api';
 
 const Records = () => {
   const [date, setDate] = useState(new Date().toISOString().split('T')[0]);
@@ -26,6 +26,21 @@ const Records = () => {
       setError('Failed to fetch attendance report for this date.');
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (recordId) => {
+    if (!window.confirm("Are you sure you want to delete this attendance record?")) {
+      return;
+    }
+    
+    try {
+      await deleteAttendanceRecord(recordId);
+      // Refresh the records after deletion
+      handleSearch();
+    } catch (err) {
+      console.error(err);
+      alert('Failed to delete attendance record.');
     }
   };
 
@@ -189,6 +204,7 @@ const Records = () => {
                 <th className="px-lg py-md font-bold uppercase tracking-wider text-center">Biometric Score</th>
                 <th className="px-lg py-md font-bold uppercase tracking-wider">Method</th>
                 <th className="px-lg py-md font-bold uppercase tracking-wider">Status</th>
+                <th className="px-lg py-md font-bold uppercase tracking-wider text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="text-body-md font-body-md text-on-surface">
@@ -236,6 +252,15 @@ const Records = () => {
                     </td>
                     <td className="px-lg py-md">
                       {getStatusColor(record.status)}
+                    </td>
+                    <td className="px-lg py-md text-right">
+                      <button 
+                        onClick={() => handleDelete(record.record_id)}
+                        className="text-error hover:bg-error-container/20 p-xs rounded-full transition-colors"
+                        title="Delete Record"
+                      >
+                        <span className="material-symbols-outlined text-[20px]">delete</span>
+                      </button>
                     </td>
                   </tr>
                 ))

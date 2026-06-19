@@ -22,8 +22,8 @@ const Login = () => {
     try {
       const data = await login({ email, password });
       // Success
-      localStorage.setItem('token', data.access_token);
-      localStorage.setItem('user', JSON.stringify(data.user));
+      sessionStorage.setItem('token', data.access_token);
+      sessionStorage.setItem('user', JSON.stringify(data.user));
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.detail || 'Invalid credentials. Please use the demo login provided below.');

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { enrollStaff } from '../services/api';
 
@@ -18,6 +18,75 @@ const Enrollment = () => {
   const [status, setStatus] = useState({ type: '', message: '' });
   const [loading, setLoading] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  // New States for 30s Face Scan
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanTimeLeft, setScanTimeLeft] = useState(30);
+  const videoRef = useRef(null);
+  const canvasRef = useRef(null);
+  const streamRef = useRef(null);
+
+  const stopScanning = () => {
+    setIsScanning(false);
+    if (streamRef.current) {
+      streamRef.current.getTracks().forEach(track => track.stop());
+      streamRef.current = null;
+    }
+    if (videoRef.current) {
+      videoRef.current.srcObject = null;
+    }
+  };
+
+  const startScanning = async () => {
+    try {
+      setFaceImages([]); // Clear previous images
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "user" } });
+      streamRef.current = stream;
+      if (videoRef.current) {
+        videoRef.current.srcObject = stream;
+      }
+      setIsScanning(true);
+      setScanTimeLeft(30);
+    } catch (err) {
+      console.error("Error accessing camera:", err);
+      setStatus({ type: 'error', message: 'Camera access denied or unavailable.' });
+    }
+  };
+
+  useEffect(() => {
+    let timerId;
+
+    if (isScanning && scanTimeLeft > 0) {
+      timerId = setInterval(() => {
+        setScanTimeLeft((prev) => prev - 1);
+      }, 1000);
+
+      // Extract a frame every 2 seconds
+      if (scanTimeLeft % 2 === 0 && scanTimeLeft !== 30 && videoRef.current && canvasRef.current) {
+        const video = videoRef.current;
+        const canvas = canvasRef.current;
+        canvas.width = video.videoWidth || 640;
+        canvas.height = video.videoHeight || 480;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        const base64Full = canvas.toDataURL('image/jpeg', 0.8);
+        const base64Data = base64Full.split(',')[1];
+        setFaceImages(prev => [...prev, base64Data]);
+      }
+    } else if (isScanning && scanTimeLeft === 0) {
+      stopScanning();
+    }
+
+    return () => clearInterval(timerId);
+  }, [isScanning, scanTimeLeft]);
+
+  // Clean up camera stream when component unmounts or step changes
+  useEffect(() => {
+    if (step !== 2) {
+      stopScanning();
+    }
+    return () => stopScanning();
+  }, [step]);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -171,15 +240,38 @@ const Enrollment = () => {
                 <p className="text-on-surface-variant">Ensure the subject is in a well-lit area and looking directly at the camera.</p>
               </div>
               <div className="flex flex-col md:flex-row gap-xl h-full flex-1">
-                <div className="flex-1 bg-surface-container rounded-xl overflow-hidden relative group border border-outline-variant flex items-center justify-center min-h-[300px]">
-                  <span className="material-symbols-outlined text-[64px] text-outline-variant opacity-50">face</span>
-                  <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-                    <label className="bg-white border-2 border-primary-container text-primary-container px-lg py-2 rounded-full font-bold hover:bg-primary-container hover:text-on-primary-container transition-all flex items-center gap-2 cursor-pointer shadow-md">
-                      <span className="material-symbols-outlined">camera</span>
-                      Upload Face Photo
-                      <input type="file" accept="image/*" multiple onChange={(e) => handleImageUpload(e, 'face')} className="hidden" />
-                    </label>
-                  </div>
+                <div className="flex-1 bg-surface-container rounded-xl overflow-hidden relative group border border-outline-variant flex flex-col items-center justify-center min-h-[300px]">
+                  {isScanning ? (
+                    <>
+                      <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover absolute inset-0" />
+                      <canvas ref={canvasRef} className="hidden" />
+                      <div className="absolute top-4 right-4 bg-error text-white px-3 py-1 rounded-full font-bold flex items-center gap-2 animate-pulse z-10 shadow-md">
+                        <span className="w-2 h-2 rounded-full bg-white"></span>
+                        Recording: {scanTimeLeft}s
+                      </div>
+                      <button onClick={stopScanning} className="absolute bottom-6 bg-error text-white px-lg py-2 rounded-full font-bold shadow-md hover:bg-error/90 transition-all flex items-center gap-2 z-10">
+                        <span className="material-symbols-outlined">stop</span>
+                        Stop Scan Early
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <span className="material-symbols-outlined text-[64px] text-outline-variant opacity-50 mb-4">face</span>
+                      <p className="text-on-surface-variant text-center mb-6 px-lg">Click the button below to start a 30-second live camera scan. The system will automatically extract multiple frames to build a strong biometric profile.</p>
+                      
+                      <div className="flex flex-wrap justify-center gap-4">
+                        <button onClick={startScanning} className="bg-primary text-on-primary px-lg py-3 rounded-full font-bold shadow-md hover:opacity-90 transition-all flex items-center gap-2">
+                          <span className="material-symbols-outlined">videocam</span>
+                          Start 30s Live Scan
+                        </button>
+                        <label className="bg-white border border-outline-variant text-on-surface px-lg py-3 rounded-full font-bold hover:bg-surface-variant transition-all flex items-center gap-2 cursor-pointer shadow-sm">
+                          <span className="material-symbols-outlined">upload</span>
+                          Manual Upload
+                          <input type="file" accept="image/*" multiple onChange={(e) => handleImageUpload(e, 'face')} className="hidden" />
+                        </label>
+                      </div>
+                    </>
+                  )}
                 </div>
                 <div className="w-full md:w-48 flex flex-col gap-md">
                   <p className="text-label-md font-bold uppercase tracking-wider text-on-surface-variant">Captured Samples ({faceImages.length})</p>
@@ -189,11 +281,10 @@ const Enrollment = () => {
                         <img src={`data:image/jpeg;base64,${b64}`} alt={`Face ${idx}`} className="w-full h-full object-cover" />
                       </div>
                     ))}
-                    {faceImages.length < 3 && (
-                      <label className="w-24 h-24 md:w-full md:aspect-square shrink-0 bg-surface-container-high rounded-lg border-2 border-dashed border-outline-variant flex items-center justify-center hover:border-primary transition-colors cursor-pointer">
-                        <span className="material-symbols-outlined text-outline">add_a_photo</span>
-                        <input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'face')} className="hidden" />
-                      </label>
+                    {faceImages.length === 0 && !isScanning && (
+                      <div className="w-24 h-24 md:w-full md:aspect-square shrink-0 bg-surface-container-high rounded-lg border-2 border-dashed border-outline-variant flex items-center justify-center opacity-50">
+                        <span className="material-symbols-outlined text-outline">photo_camera</span>
+                      </div>
                     )}
                   </div>
                 </div>

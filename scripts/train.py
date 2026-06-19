@@ -166,6 +166,31 @@ def train():
 
     print(f"Training Complete! Best Validation Accuracy: {best_val_acc:.4f}")
     print(f"Model saved at: {best_model_path}")
+    
+    # 6. Final Test Evaluation
+    test_real = list((base_dir / 'test' / 'real').glob('*.jpg'))
+    test_spoof = list((base_dir / 'test' / 'spoof').glob('*.jpg'))
+    if test_real or test_spoof:
+        print("\n--- Running Final Evaluation on Test Dataset ---")
+        test_paths = test_real + test_spoof
+        test_labels = [0]*len(test_real) + [1]*len(test_spoof)
+        test_dataset = LivenessDataset(test_paths, test_labels, is_train=False)
+        test_loader = DataLoader(test_dataset, batch_size=32, shuffle=False, num_workers=4)
+        
+        # Load best model
+        model.load_state_dict(torch.load(str(best_model_path)))
+        model.eval()
+        
+        test_correct = 0
+        with torch.no_grad():
+            for images, labels in test_loader:
+                images, labels = images.to(device), labels.to(device)
+                outputs = model(images)
+                _, predicted = torch.max(outputs, 1)
+                test_correct += (predicted == labels).sum().item()
+                
+        test_acc = test_correct / len(test_dataset)
+        print(f"Final Test Accuracy: {test_acc*100:.2f}% (on {len(test_dataset)} completely unseen images)")
 
 if __name__ == "__main__":
     # Required for Windows multi-processing (num_workers > 0)

@@ -12,3 +12,5 @@ numpy
 scipy
 ultralytics
 supervision
+aiortc
+aiohttp

@@ -6,24 +6,26 @@ logger = setup_logger("decision_engine", "central.log")
 class DecisionEngine:
     @staticmethod
     def evaluate(face_score: float, face_match: bool, 
-                 iris_score: float, iris_match: bool, 
                  liveness_score: float, liveness_passed: bool) -> dict:
         """
-        Final Score = (Face Score * 0.40) + (Iris Score * 0.35) + (Liveness Score * 0.25)
+        Final Score = (Face Score * 0.70) + (Liveness Score * 0.30)
         
         Approval conditions:
         - Face Match = PASS
-        - Iris Match = PASS
         - Liveness = PASS
         - Final Score >= 0.75
         """
+        # Face Score (Cosine Similarity) is typically between 0.40 and 0.70.
+        # We need to normalize it to behave like a percentage (0.0 to 1.0) before weighting.
+        # If it's a match, we boost it. 0.50 similarity becomes ~0.85 confidence.
+        normalized_face = min(1.0, face_score * 1.7) if face_match else 0.0
+        
         # Calculate combined weighted score
-        final_score = (face_score * 0.40) + (iris_score * 0.35) + (liveness_score * 0.25)
+        final_score = (normalized_face * 0.70) + (liveness_score * 0.30)
         
         # Verify individual and weighted passes
         conditions = {
             "face_match_passed": face_match,
-            "iris_match_passed": iris_match,
             "liveness_passed": liveness_passed,
             "score_passed": final_score >= settings.FINAL_DECISION_THRESHOLD
         }
@@ -35,8 +37,6 @@ class DecisionEngine:
             reasons = []
             if not face_match:
                 reasons.append("Face verification failed (unknown face or mismatch)")
-            if not iris_match:
-                reasons.append("Webcam-based iris/eye verification failed")
             if not liveness_passed:
                 reasons.append("Liveness check failed (potential spoofing)")
             if not conditions["score_passed"]:

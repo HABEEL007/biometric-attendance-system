@@ -305,6 +305,24 @@ class DatabaseManager:
             logger.error(f"Error retrieving today's records: {e}", exc_info=True)
             return []
 
+    def delete_attendance_record(self, record_id: int) -> bool:
+        """Deletes a specific attendance record by its record_id."""
+        query = "DELETE FROM attendance_records WHERE record_id = ?"
+        try:
+            with self.get_connection() as conn:
+                cursor = conn.execute(query, (record_id,))
+                conn.commit()
+                # Check if any row was actually deleted
+                if cursor.rowcount > 0:
+                    logger.info(f"Attendance record {record_id} deleted successfully.")
+                    return True
+                else:
+                    logger.warning(f"Attendance record {record_id} not found.")
+                    return False
+        except Exception as e:
+            logger.error(f"Error deleting attendance record {record_id}: {e}", exc_info=True)
+            return False
+
     # --- Liveness Logs ---
     def add_liveness_log(self, staff_id: Optional[int], blink_detected: int, 
                          head_movement_detected: int, spoof_probability: float, 

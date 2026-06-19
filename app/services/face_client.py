@@ -24,7 +24,7 @@ class FaceClient:
             logger.error(f"Failed to connect to Face service at {url}: {e}")
             return None
 
-    async def match(self, embedding1: list, embedding2: list, threshold: float = settings.FACE_MATCH_THRESHOLD) -> Optional[Dict[str, Any]]:
+    async def match(self, embedding1: list, embedding2: list, threshold: float = 0.40) -> Optional[Dict[str, Any]]:
         """Hits the Face Service /match endpoint asynchronously."""
         url = f"{self.base_url}/match"
         payload = {
