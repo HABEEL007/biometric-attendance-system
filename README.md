@@ -1,3 +1,11 @@
+---
+title: Attendance Backend
+emoji: 📊
+colorFrom: gray
+colorTo: green
+sdk: docker
+pinned: false
+---
 # AI Biometric Attendance System (v2.0)
 
 A modular, production-level biometric attendance system with a **microservices-based architecture**. It uses:
